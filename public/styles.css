@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+/* --- GLOBAL & BASE STYLES --- */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7f9fb;
+    color: #1f2937;
+    line-height: 1.6;
+
+    /* TRANSITION pour le corps du Mode Sombre/Clair */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- ARTICLE CONTAINER STYLES --- */
+
+.article-link {
+    transition: color 0.2s, text-decoration-color 0.2s;
+}
+.article-link:hover {
+    color: #1e40af;
+}
+
+#articles-container > div {
+    /* Styles du mode clair */
+    background: #ffffff;
+    border-left: 4px solid #3b82f6;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+
+    /* TRANSITION pour les cartes */
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#articles-container > div:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+#articles-container span {
+    color: #6b7280;
+    transition: color 0.3s ease;
+}
+#articles-container p {
+    color: #374151;
+    transition: color 0.3s ease;
+}
+
+#no-results {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- DARK MODE (Basé sur body.dark) --- */
+
+body.dark {
+    background-color: #111827;
+    color: #f3f4f6;
+}
+body.dark #articles-container > div {
+    background-color: #1f2937;
+    border-color: #2563eb;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+body.dark #articles-container span {
+    color: #9ca3af;
+}
+body.dark #articles-container p {
+    color: #d1d5db;
+}
+body.dark .article-link {
+    color: #60a5fa;
+}
+body.dark #no-results {
+    background-color: #78350f;
+    border-color: #b45309;
+    color: #fde68a;
+}
+body.dark input#keyword-input, body.dark button { /* Assurez-vous que tous les éléments de formulaire sont couverts */
+    transition: all 0.3s ease;
+}
+
+/* --- NOUVELLES FONCTIONNALITÉS CSS --- */
+
+/* 📖 Style pour l'Historique de Lecture (.article-read) */
+.article-read {
+    opacity: 0.75;
+    border-left-color: #9ca3af !important;
+}
+
+body:not(.dark) .article-read {
+    background-color: #e5e7eb !important;
+}
+
+body.dark .article-read {
+    background-color: #262626 !important;
+}
+
+/* 🙈 Style pour le bouton 'Masquer' Source */
+.hide-source-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px;
+    padding: 0;
+}
+
+/* 🧠 Style pour le Résumé */
+.summary-output {
+    padding: 10px;
+    border-left: 3px solid #10b981; /* Vert pour le résumé */
+    background-color: #ecfdf5;
+    color: #065f46;
+    margin-top: 10px;
+}
+body.dark .summary-output {
+    background-color: #14532d;
+    color: #a7f3d0;
+    border-left-color: #6ee7b7;
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowly - Agrégateur d'Actualités</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body id="body" class="bg-gray-50 font-sans text-gray-800">
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <header class="mb-10 p-6 bg-white rounded-2xl shadow-md border border-gray-200 flex justify-between items-center dark:bg-gray-800 dark:border-gray-700">
+        <div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Flowly</h1>
+            <p class="text-gray-600 dark:text-gray-400 text-lg">Agrégateur d'Actualités : consommation d'API et filtrage interactif.</p>
+        </div>
+        <button id="dark-mode-toggle" class="ml-4 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+            🌙 Dark Mode
+        </button>
+    </header>
+
+    <section class="mb-10 p-6 bg-white rounded-2xl shadow-md border border-blue-100 dark:bg-gray-800 dark:border-blue-900">
+
+        <div class="lang-selector mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+            <label for="language-select" class="text-lg font-semibold text-gray-700 dark:text-gray-300 mr-4">
+                Choisir la Langue des Actualités :
+            </label>
+            <select id="language-select" class="p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="fr"> Français</option>
+                <option value="en">Anglais</option>
+            </select>
+        </div>
+
+        <h2 class="text-2xl font-semibold text-blue-700 dark:text-blue-400 mb-5 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-4.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+            </svg>
+            Filtrer les Articles par Mot-Clé
+        </h2>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text" id="keyword-input" placeholder="Ex: Technologie, Politique, Sport..." class="flex-grow p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <button id="filter-button" class="bg-blue-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-blue-700 transition duration-150 shadow-md">Appliquer le filtre</button>
+            <button id="clear-button" class="bg-gray-400 text-white px-5 py-3 rounded-xl font-medium hover:bg-gray-500 transition duration-150 shadow-md">Effacer</button>
+        </div>
+    </section>
+
+    <div id="status-message" class="hidden mb-6"></div>
+
+    <div id="loading-indicator" class="hidden text-center p-6 text-blue-600 dark:text-blue-300 font-medium">
+        <svg class="animate-spin h-6 w-6 mr-2 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="4" stroke-opacity="0.25"></circle>
+            <path d="M4 12a8 8 0 018-8v8H4z" fill="currentColor"></path>
+        </svg>
+        Chargement des actualités...
+    </div>
+
+    <div id="articles-container" class="grid grid-cols-1 gap-6"></div>
+
+    <div id="no-results" class="hidden text-center p-8 bg-yellow-100 border border-yellow-300 rounded-2xl text-yellow-800 mt-8 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-200">
+        <p class="font-semibold text-lg">Aucun article trouvé.</p>
+        <p>Veuillez essayer un autre mot-clé.</p>
+    </div>
+</div>
+
+<script src="js/fetchNews.js"></script>
+</body>
+</html>
