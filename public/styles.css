@@ -1,122 +1,141 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Libre+Franklin:wght@300;600;900&display=swap');
 
-/* --- GLOBAL & BASE STYLES --- */
-
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f7f9fb;
-    color: #1f2937;
-    line-height: 1.6;
-
-    /* TRANSITION pour le corps du Mode Sombre/Clair */
-    transition: background-color 0.3s ease, color 0.3s ease;
+:root {
+    /* MODE CLAIR : Encre sur Papier */
+    --bg-page: #f9f7f2;       /* Teinte papier journal noble */
+    --bg-card: #ffffff;
+    --text-main: #000000;     /* Encre noire pure */
+    --border-ink: #000000;    /* Lignes de séparation franches */
+    --accent: #005a76;        /* Bleu pétrole pour les détails */
+    --highlight: #ffcc00;     /* Jaune bouton signature */
 }
 
-/* --- ARTICLE CONTAINER STYLES --- */
-
-.article-link {
-    transition: color 0.2s, text-decoration-color 0.2s;
+body.dark {
+    /* MODE SOMBRE : Onyx & Or */
+    --bg-page: #050505;       /* Noir absolu */
+    --bg-card: #0f172a;
+    --text-main: #ffffff;
+    --border-ink: #fbbf24;    /* Bordures Or */
+    --accent: #fbbf24;
+    --highlight: #fbbf24;
 }
-.article-link:hover {
-    color: #1e40af;
+
+html, body {
+    background-color: var(--bg-page) !important;
+    color: var(--text-main);
+    margin: 0;
+    transition: background-color 0.4s ease;
+    -webkit-font-smoothing: antialiased;
+}
+
+header {
+    /* Supprime TOUTE marge et padding inutile */
+    padding: 10px 0 0 0 !important;
+    margin: 0 !important;
+    border-bottom: none !important; /* On gère la bordure dans la nav */
+    text-align: center;
+    background-color: var(--bg-page);
+}
+
+.logo-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-container h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 5rem) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0.8 !important; /* Compresse l'espace vertical du texte */
+    color: var(--text-main);
+}
+
+.logo-container p {
+    font-size: 0.8rem !important;
+    /* On réduit la marge du bas à presque rien */
+    margin: 5px 0 5px 0 !important;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+/* NAVIGATION COLLÉE */
+nav {
+    margin-top: 0 !important; /* Force la nav à remonter */
+    padding: 8px 0 !important;
+    background-color: var(--text-main);
+    border-top: 1px solid var(--border-ink); /* La ligne de séparation est ici */
+}
+/* --- 5. SECTION FILTRES (Style "Box" de Presse) --- */
+section.mb-12 {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: var(--bg-card) !important;
+    border: 3px solid var(--border-ink);
+    box-shadow: 10px 10px 0px 0px var(--border-ink); /* Ombre solide style brutaliste */
+}
+
+input, select {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    border: 1px solid var(--border-ink);
+    padding: 10px;
+    font-weight: 700;
+}
+
+/* --- 6. GRILLE D'ARTICLES (La "Une" vs le reste) --- */
+#articles-container {
+    max-width: 1200px;
+    margin: 60px auto;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 40px;
+    padding: 0 20px;
 }
 
 #articles-container > div {
-    /* Styles du mode clair */
-    background: #ffffff;
-    border-left: 4px solid #3b82f6;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    padding: 1.5rem;
-
-    /* TRANSITION pour les cartes */
-    transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s ease, border-color 0.3s ease;
+    grid-column: span 12;
+    border-bottom: 1px solid var(--border-ink);
+    padding-bottom: 40px;
 }
 
-#articles-container > div:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+@media (min-width: 1024px) {
+    /* Article de la Une : prend 2/3 de la largeur */
+    #articles-container > div:first-child {
+        grid-column: span 8;
+        border-right: 1px solid var(--border-ink);
+        padding-right: 40px;
+    }
+    /* Articles secondaires : colonne de droite */
+    #articles-container > div:nth-child(n+2) {
+        grid-column: span 4;
+    }
 }
 
-#articles-container span {
-    color: #6b7280;
-    transition: color 0.3s ease;
-}
-#articles-container p {
-    color: #374151;
-    transition: color 0.3s ease;
-}
-
-/* --- DARK MODE (Basé sur body.dark) --- */
-
-body.dark {
-    background-color: #111827;
-    color: #f3f4f6;
-}
-body.dark #articles-container > div {
-    background-color: #1f2937;
-    border-color: #2563eb;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-body.dark #articles-container span {
-    color: #9ca3af;
-}
-body.dark #articles-container p {
-    color: #d1d5db;
-}
-body.dark .article-link {
-    color: #60a5fa;
-}
-body.dark #no-results {
-    background-color: #78350f;
-    border-color: #b45309;
-    color: #fde68a;
-}
-body.dark input#keyword-input, body.dark button, body.dark select {
-    transition: all 0.3s ease;
-}
-body.dark input#keyword-input, body.dark select {
-    background-color: #374151;
-    border-color: #4b5563;
-    color: #f3f4f6;
+.article-link {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--text-main);
+    text-decoration: none;
+    line-height: 1;
+    margin-bottom: 15px;
+    display: block;
 }
 
-
-/* --- NOUVELLES FONCTIONNALITÉS CSS --- */
-
-/* 📖 Style pour l'Historique de Lecture (.article-read) */
-.article-read {
-    opacity: 0.75;
-    border-left-color: #9ca3af !important;
+.article-link:hover {
+    font-style: italic;
+    color: var(--accent);
 }
 
-body:not(.dark) .article-read {
-    background-color: #e5e7eb !important;
-}
-
-body.dark .article-read {
-    background-color: #262626 !important;
-}
-
-/* 🧠 Style pour le Résumé */
-.summary-output {
-    padding: 10px;
-    border-left: 3px solid #10b981;
-    background-color: #ecfdf5;
-    color: #065f46;
-    margin-top: 10px;
-}
-body.dark .summary-output {
-    background-color: #14532d;
-    color: #a7f3d0;
-    border-left-color: #6ee7b7;
-}
-
-/* 🌙 Style des sélecteurs de langue/source */
-.lang-selector, .source-selector {
-    /* Style pour s'assurer que les séparateurs sont adaptés au mode sombre */
-    border-color: #e5e7eb; /* mode clair */
-}
-body.dark .lang-selector, body.dark .source-selector {
-    border-color: #374151; /* mode sombre */
+#filter-button {
+    background-color: var(--highlight);
+    color: #000;
+    border: 2px solid var(--border-ink);
+    font-weight: 900;
+    text-transform: uppercase;
 }

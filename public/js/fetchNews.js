@@ -5,7 +5,9 @@ const clearButton = document.getElementById('clear-button');
 const loadingIndicator = document.getElementById('loading-indicator');
 const noResultsIndicator = document.getElementById('no-results');
 const darkModeToggle = document.getElementById('dark-mode-toggle');
-const languageSelect = document.getElementById('language-select'); // Le nouveau sélecteur
+const languageSelect = document.getElementById('language-select');
+const sourceSelect = document.getElementById('source-select');
+const categorySelect = document.getElementById('category-select');
 
 let allArticles = [];
 
@@ -20,6 +22,13 @@ function timeAgo(publishedDate) {
     if (diff < 86400) return `Il y a ${Math.floor(diff/3600)}h`;
     if (diff < 604800) return `Il y a ${Math.floor(diff/86400)}j`;
     return `Le ${published.toLocaleDateString('fr-FR')}`;
+}
+
+function getSelectedValues(selectElement) {
+    if (!selectElement) return [];
+    return Array.from(selectElement.options)
+        .filter(option => option.selected && option.value !== '')
+        .map(option => option.value);
 }
 
 // --- LOCAL STORAGE HELPERS ---
@@ -37,7 +46,19 @@ function getHiddenSources() {
         return Array.isArray(hidden) ? hidden : [];
     } catch (e) { return []; }
 }
+function populateSourceSelect(articles) {
+    if (!sourceSelect) return;
+    // Crée une liste unique de toutes les sources présentes dans les articles
+    const sources = [...new Set(articles.map(a => a.source))].sort();
 
+    sourceSelect.innerHTML = '<option value="">Toutes les sources (' + articles.length + ')</option>';
+    sources.forEach(src => {
+        const option = document.createElement('option');
+        option.value = src;
+        option.textContent = src;
+        sourceSelect.appendChild(option);
+    });
+}
 // --- RENDERING & MARKUP ---
 
 function createArticleHtml(article) {
@@ -47,28 +68,22 @@ function createArticleHtml(article) {
     const sourceName = article.source || 'Inconnue';
 
     return `
-    <div class="p-5 bg-white shadow-lg hover:shadow-xl transition rounded-xl border-l-4 border-blue-500 ${isRead ? 'article-read' : ''}" data-article-id="${articleId}" data-full-description="${article.description}">
-        ${article.urlToImage ? `<img src="${article.urlToImage}" alt="Image article" class="w-full h-40 object-cover rounded-lg mb-3">` : ''}
+    <div class="p-5 bg-white shadow-lg hover:shadow-xl transition rounded-xl border-l-4 border-blue-500 dark:bg-gray-800 dark:border-blue-700 ${isRead ? 'opacity-60' : ''}" data-article-id="${articleId}" data-full-description="${article.description}">
+        ${article.urlToImage ? `<img src="${article.urlToImage}" alt="Image" class="w-full h-40 object-cover rounded-lg mb-3">` : ''}
         <div class="flex items-center gap-2 mb-2">
-            <span class="text-xs font-semibold uppercase text-gray-500" data-source-name="${sourceName}">${sourceName}</span>
-            <button class="hide-source-btn text-red-500 hover:text-red-700 text-xs font-bold" title="Masquer toutes les nouvelles de cette source">
-                [Masquer]
-            </button>
-            ${article.category ? `<span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-xl">${article.category}</span>` : ''}
+            <span class="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400" data-source-name="${sourceName}">${sourceName}</span>
+            <button class="hide-source-btn text-red-500 hover:text-red-700 text-xs font-bold">[Masquer]</button>
+            ${article.category ? `<span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-xl dark:bg-blue-900 dark:text-blue-200">${article.category}</span>` : ''}
             ${article.publishedAt ? `<span class="text-gray-400 text-xs">${timeAgo(article.publishedAt)}</span>` : ''}
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mt-1 mb-2">
-            <a href="${article.lien}" target="_blank" rel="noopener noreferrer" class="article-link text-blue-600 hover:underline">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1 mb-2">
+            <a href="${article.lien}" target="_blank" rel="noopener noreferrer" class="article-link text-blue-600 hover:underline dark:text-blue-400">
                 ${article.titre}
             </a>
         </h3>
-        <p class="text-gray-700">${article.description || 'Description non disponible.'}</p>
-        
-        <button class="summarize-btn mt-3 px-3 py-1 text-xs font-medium text-white bg-green-500 rounded-md hover:bg-green-600 transition">
-            Résumer (IA)
-        </button>
-        <p class="summary-output mt-2 text-sm italic text-green-700 hidden"></p>
-        
+        <p class="text-gray-700 dark:text-gray-300">${article.description || 'Pas de description.'}</p>
+        <button class="summarize-btn mt-3 px-3 py-1 text-xs font-medium text-white bg-green-500 rounded-md hover:bg-green-600 transition">Résumer (IA)</button>
+        <p class="summary-output mt-2 text-sm italic text-green-700 dark:text-green-400 hidden"></p>
     </div>
     `;
 }
@@ -76,177 +91,158 @@ function createArticleHtml(article) {
 function renderArticles(articles) {
     articlesContainer.innerHTML = '';
     if (!articles.length) {
-        if (noResultsIndicator) noResultsIndicator.classList.remove('hidden');
+        noResultsIndicator.classList.remove('hidden');
         return;
     }
-    if (noResultsIndicator) noResultsIndicator.classList.add('hidden');
+    noResultsIndicator.classList.add('hidden');
     articles.forEach(article => articlesContainer.insertAdjacentHTML('beforeend', createArticleHtml(article)));
 }
 
-// --- CORE LOGIC ---
+// --- DYNAMIC SELECTS POPULATION ---
+
+function populateCategorySelect(articles) {
+    if (!categorySelect) return;
+    const categories = [...new Set(articles.map(a => a.category))].filter(c => c).sort();
+    categorySelect.innerHTML = '<option value="">Toutes les catégories</option>';
+    categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.toLowerCase();
+        option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+        categorySelect.appendChild(option);
+    });
+}
+
+function populateSourceSelect(articles) {
+    if (!sourceSelect) return;
+    const sources = [...new Set(articles.map(a => a.source))].sort();
+    sourceSelect.innerHTML = '<option value="">Toutes les sources (' + articles.length + ')</option>';
+    sources.forEach(src => {
+        const option = document.createElement('option');
+        option.value = src;
+        option.textContent = src;
+        sourceSelect.appendChild(option);
+    });
+}
+
+// --- FILTERING LOGIC ---
 
 function renderFilteredArticles() {
     const keyword = keywordInput.value.toLowerCase().trim();
     const hiddenSources = getHiddenSources();
+    const selectedSources = getSelectedValues(sourceSelect);
+    const selectedCats = getSelectedValues(categorySelect);
 
-    // 1. Filtrer les articles masqués
-    let filtered = allArticles.filter(article =>
-        !hiddenSources.includes(article.source)
-    );
+    let filtered = allArticles.filter(article => !hiddenSources.includes(article.source));
 
-    // 2. Filtrer par mot-clé
+    if (selectedSources.length > 0) filtered = filtered.filter(a => selectedSources.includes(a.source));
+    if (selectedCats.length > 0) filtered = filtered.filter(a => a.category && selectedCats.includes(a.category.toLowerCase()));
+
     if (keyword) {
         filtered = filtered.filter(a =>
             (a.titre && a.titre.toLowerCase().includes(keyword)) ||
             (a.description && a.description.toLowerCase().includes(keyword))
         );
     }
-
     renderArticles(filtered);
 }
 
-// *** FONCTION DE CHARGEMENT CORRIGÉE ***
+// --- CORE LOADING ---
+
 async function loadNews() {
     loadingIndicator.classList.remove('hidden');
-
-    // CORRECTION : Lire la langue sélectionnée pour l'envoyer au serveur
+    articlesContainer.innerHTML = '';
     const selectedLang = languageSelect ? languageSelect.value : 'fr';
 
     try {
-        // Envoi du paramètre 'lang' au backend
         const res = await fetch(`/api/news?lang=${selectedLang}`);
         const data = await res.json();
-
         if (data.success) {
             allArticles = data.articles;
+            populateSourceSelect(allArticles);
+            populateCategorySelect(allArticles);
             renderFilteredArticles();
-        } else {
-            console.error("Échec de la récupération des articles:", data.message || "Erreur inconnue");
         }
     } catch(err) {
-        console.error("Erreur lors de l'appel API:", err);
+        console.error("Erreur API:", err);
     } finally {
         loadingIndicator.classList.add('hidden');
     }
 }
+function handleLanguageChange() {
+    const newLang = languageSelect.value;
+    localStorage.setItem('flowlyLang', newLang);
 
+    // RESET DES FILTRES (Indispensable pour pas avoir de mélange)
+    if (sourceSelect) sourceSelect.innerHTML = '<option value="">Chargement...</option>';
+    if (categorySelect) categorySelect.value = '';
 
+    articlesContainer.innerHTML = ''; // Vide l'écran pour le nouveau flux
+    loadNews();
+}
 // --- EVENT HANDLERS ---
 
-function handleArticleClick(event) {
-    const link = event.target.closest('.article-link');
-    if (!link) return;
-    const articleId = link.href;
-    const articleCard = link.closest('[data-article-id]');
+async function handleSummarizeClick(target) {
+    const card = target.closest('[data-article-id]');
+    const text = card.getAttribute('data-full-description');
+    const output = card.querySelector('.summary-output');
 
-    let history = getReadHistory();
-
-    if (!history.includes(articleId)) {
-        history.push(articleId);
-        localStorage.setItem('readHistory', JSON.stringify(history));
-    }
-
-    if (articleCard) {
-        articleCard.classList.add('article-read');
-    }
-}
-
-function handleHideSourceClick(event) {
-    const hideButton = event.target.closest('.hide-source-btn');
-    if (!hideButton) return;
-
-    const sourceElement = hideButton.previousElementSibling;
-    const sourceToHide = sourceElement ? sourceElement.getAttribute('data-source-name') : null;
-
-    if (sourceToHide) {
-        let hiddenSources = getHiddenSources();
-
-        if (!hiddenSources.includes(sourceToHide)) {
-            hiddenSources.push(sourceToHide);
-            localStorage.setItem('hiddenSources', JSON.stringify(hiddenSources));
-
-            renderFilteredArticles();
-        }
-    }
-}
-
-async function handleSummarizeClick(event) {
-    const summarizeButton = event.target.closest('.summarize-btn');
-    if (!summarizeButton) return;
-
-    const articleCard = summarizeButton.closest('[data-article-id]');
-    const fullDescription = articleCard ? articleCard.getAttribute('data-full-description') : null;
-    const outputElement = articleCard ? articleCard.querySelector('.summary-output') : null;
-
-    if (!fullDescription || !outputElement) return;
-
-    outputElement.classList.remove('hidden');
-    outputElement.textContent = "Génération du résumé par l'IA en cours...";
-    summarizeButton.disabled = true;
+    output.classList.remove('hidden');
+    output.textContent = "Génération du résumé...";
 
     try {
         const res = await fetch('/api/summarize', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: fullDescription })
+            body: JSON.stringify({ text })
         });
         const data = await res.json();
+        output.textContent = data.success ? data.summary : "Erreur de résumé.";
+    } catch (e) { output.textContent = "Serveur indisponible."; }
+}
 
-        if (data.success) {
-            outputElement.textContent = `Résumé : ${data.summary}`;
-        } else {
-            outputElement.textContent = `Erreur: ${data.message || 'Échec de la connexion au service de résumé.'}`;
-        }
-    } catch (error) {
-        outputElement.textContent = "Erreur: Impossible de contacter le serveur de résumé.";
-    } finally {
-        summarizeButton.disabled = false;
+function handleHideSource(target) {
+    const sourceName = target.previousElementSibling.getAttribute('data-source-name');
+    let hidden = getHiddenSources();
+    if (!hidden.includes(sourceName)) {
+        hidden.push(sourceName);
+        localStorage.setItem('hiddenSources', JSON.stringify(hidden));
+        renderFilteredArticles();
     }
-}
-
-function handleDarkModeToggle() {
-    const isDark = document.body.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-}
-
-// *** NOUVELLE FONCTIONNALITÉ : GESTION DE LA LANGUE ***
-function handleLanguageChange() {
-    const newLang = languageSelect.value;
-    // Sauvegarder la préférence dans le localStorage
-    localStorage.setItem('flowlyLang', newLang);
-    // Recharger les nouvelles immédiatement avec la nouvelle langue
-    loadNews(); // <-- Ceci force le rechargement avec le nouveau paramètre 'lang'
 }
 
 // --- INITIALISATION ---
 
-// 1. Initialisation de la langue au chargement
-if (languageSelect) {
-    const savedLang = localStorage.getItem('flowlyLang') || 'fr'; // 'fr' par défaut
-    languageSelect.value = savedLang;
-    // Écouteur pour le changement de langue
-    languageSelect.addEventListener('change', handleLanguageChange);
-}
-
-
-// 2. Initialisation du Dark Mode
-if (darkModeToggle) {
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark');
-        if (darkModeToggle.type === 'checkbox') darkModeToggle.checked = true;
-    }
-    darkModeToggle.addEventListener('click', handleDarkModeToggle);
-}
-
-// 3. Écouteurs pour les autres actions
-filterButton.addEventListener('click', renderFilteredArticles);
-clearButton.addEventListener('click', () => {
-    keywordInput.value = '';
-    renderFilteredArticles();
+languageSelect.addEventListener('change', () => {
+    localStorage.setItem('flowlyLang', languageSelect.value);
+    if(sourceSelect) sourceSelect.value = '';
+    if(categorySelect) categorySelect.value = '';
+    loadNews();
 });
-articlesContainer.addEventListener('click', handleArticleClick);
-articlesContainer.addEventListener('click', handleHideSourceClick);
-articlesContainer.addEventListener('click', handleSummarizeClick);
 
+if (sourceSelect) sourceSelect.addEventListener('change', renderFilteredArticles);
+if (categorySelect) categorySelect.addEventListener('change', renderFilteredArticles);
+filterButton.addEventListener('click', renderFilteredArticles);
+articlesContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('summarize-btn')) handleSummarizeClick(e.target);
+    if (e.target.classList.contains('hide-source-btn')) handleHideSource(e.target);
+    if (e.target.classList.contains('article-link')) {
+        const id = e.target.closest('[data-article-id]').getAttribute('data-article-id');
+        let history = getReadHistory();
+        if(!history.includes(id)) {
+            history.push(id);
+            localStorage.setItem('readHistory', JSON.stringify(history));
+            e.target.closest('[data-article-id]').classList.add('opacity-60');
+        }
+    }
+});
 
-window.onload = loadNews; // Charge les articles (maintenant avec la bonne langue)
+darkModeToggle.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+});
+
+// Restaurer thème et langue au démarrage
+if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+languageSelect.value = localStorage.getItem('flowlyLang') || 'fr';
+
+window.onload = loadNews;
