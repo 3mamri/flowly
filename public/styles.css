@@ -47,10 +47,6 @@ body {
     transition: color 0.3s ease;
 }
 
-#no-results {
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-
 /* --- DARK MODE (Basé sur body.dark) --- */
 
 body.dark {
@@ -76,9 +72,15 @@ body.dark #no-results {
     border-color: #b45309;
     color: #fde68a;
 }
-body.dark input#keyword-input, body.dark button { /* Assurez-vous que tous les éléments de formulaire sont couverts */
+body.dark input#keyword-input, body.dark button, body.dark select {
     transition: all 0.3s ease;
 }
+body.dark input#keyword-input, body.dark select {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f3f4f6;
+}
+
 
 /* --- NOUVELLES FONCTIONNALITÉS CSS --- */
 
@@ -96,19 +98,10 @@ body.dark .article-read {
     background-color: #262626 !important;
 }
 
-/* 🙈 Style pour le bouton 'Masquer' Source */
-.hide-source-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-left: 5px;
-    padding: 0;
-}
-
 /* 🧠 Style pour le Résumé */
 .summary-output {
     padding: 10px;
-    border-left: 3px solid #10b981; /* Vert pour le résumé */
+    border-left: 3px solid #10b981;
     background-color: #ecfdf5;
     color: #065f46;
     margin-top: 10px;
@@ -117,4 +110,13 @@ body.dark .summary-output {
     background-color: #14532d;
     color: #a7f3d0;
     border-left-color: #6ee7b7;
+}
+
+/* 🌙 Style des sélecteurs de langue/source */
+.lang-selector, .source-selector {
+    /* Style pour s'assurer que les séparateurs sont adaptés au mode sombre */
+    border-color: #e5e7eb; /* mode clair */
+}
+body.dark .lang-selector, body.dark .source-selector {
+    border-color: #374151; /* mode sombre */
 }
