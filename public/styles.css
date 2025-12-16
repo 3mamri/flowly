@@ -1,96 +1,156 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Libre+Franklin:wght@300;600;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Inter:wght@400;700;900&display=swap');
 
+/* --- 1. CONFIGURATION DES VARIABLES --- */
 :root {
-    /* MODE CLAIR : Encre sur Papier */
-    --bg-page: #f9f7f2;       /* Teinte papier journal noble */
-    --bg-card: #ffffff;
-    --text-main: #000000;     /* Encre noire pure */
-    --border-ink: #000000;    /* Lignes de séparation franches */
-    --accent: #005a76;        /* Bleu pétrole pour les détails */
-    --highlight: #ffcc00;     /* Jaune bouton signature */
+    --bg: #f9f7f2;       /* Fond crème papier journal */
+    --txt: #000;
+    --txt-muted: #555;
+    --brd: #000;
+    --accent: #fbbf24;   /* Jaune premium */
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
 body.dark {
-    /* MODE SOMBRE : Onyx & Or */
-    --bg-page: #050505;       /* Noir absolu */
-    --bg-card: #0f172a;
-    --text-main: #ffffff;
-    --border-ink: #fbbf24;    /* Bordures Or */
-    --accent: #fbbf24;
-    --highlight: #fbbf24;
+    --bg: #050505;       /* Noir très sombre */
+    --txt: #fff;
+    --txt-muted: #aaa;
+    --brd: #fbbf24;      /* Bordures dorées en mode sombre */
+    --card-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
+/* --- 2. STRUCTURE GLOBALE --- */
 html, body {
-    background-color: var(--bg-page) !important;
-    color: var(--text-main);
+    background-color: var(--bg) !important;
+    color: var(--txt);
     margin: 0;
-    transition: background-color 0.4s ease;
-    -webkit-font-smoothing: antialiased;
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-header {
-    /* Supprime TOUTE marge et padding inutile */
-    padding: 10px 0 0 0 !important;
-    margin: 0 !important;
-    border-bottom: none !important; /* On gère la bordure dans la nav */
+body { opacity: 0; }
+body.ready { opacity: 1; transition: opacity 0.5s ease; }
+
+.hidden { display: none !important; }
+
+/* --- 3. HEADER & NAVIGATION --- */
+.top-bar {
     text-align: center;
-    background-color: var(--bg-page);
+    padding: 8px 0;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-.logo-container {
-    margin: 0 !important;
-    padding: 0 !important;
-    display: flex;
-    flex-direction: column;
+.lang-switcher span { cursor: pointer; opacity: 0.4; margin: 0 5px; transition: opacity 0.2s; }
+.lang-switcher span.active { opacity: 1; text-decoration: underline; }
+
+.minimal-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
+    padding: 10px 40px 5px 40px;
 }
 
-.logo-container h1 {
+.h-center h1 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(3rem, 8vw, 5rem) !important;
+    font-size: clamp(40px, 8vw, 80px);
     margin: 0 !important;
-    padding: 0 !important;
-    line-height: 0.8 !important; /* Compresse l'espace vertical du texte */
-    color: var(--text-main);
+    line-height: 0.7 !important;
+    letter-spacing: -4px;
+    text-align: center;
 }
 
-.logo-container p {
-    font-size: 0.8rem !important;
-    /* On réduit la marge du bas à presque rien */
-    margin: 5px 0 5px 0 !important;
-    text-transform: uppercase;
+.h-center p {
+    font-size: 11px;
+    margin: 8px 0 0 0 !important;
+    text-align: center;
+    font-style: italic;
     opacity: 0.7;
+    text-transform: uppercase;
 }
 
-/* NAVIGATION COLLÉE */
-nav {
-    margin-top: 0 !important; /* Force la nav à remonter */
-    padding: 8px 0 !important;
-    background-color: var(--text-main);
-    border-top: 1px solid var(--border-ink); /* La ligne de séparation est ici */
+.h-left { font-size: 10px; font-weight: 900; opacity: 0.6; }
+.h-right { text-align: right; }
+
+#dark-mode-toggle {
+    background: var(--txt);
+    color: var(--bg);
+    border: none;
+    padding: 6px 14px;
+    font-size: 10px;
+    font-weight: 900;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
-/* --- 5. SECTION FILTRES (Style "Box" de Presse) --- */
-section.mb-12 {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: var(--bg-card) !important;
-    border: 3px solid var(--border-ink);
-    box-shadow: 10px 10px 0px 0px var(--border-ink); /* Ombre solide style brutaliste */
+
+#dark-mode-toggle:hover { transform: scale(1.05); }
+
+.compact-nav {
+    border-top: 1px solid var(--brd);
+    border-bottom: 1px solid var(--brd);
+    padding: 12px 0;
+    text-align: center;
+    margin-top: 10px;
+    background-color: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.compact-nav span {
+    margin: 0 15px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.compact-nav span:hover { color: var(--accent); }
+
+/* --- 4. BARRE DE RECHERCHE --- */
+.search-bar {
+    max-width: 1000px;
+    margin: 20px auto;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: var(--bg);
+    border: 1px solid var(--brd);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
 }
 
 input, select {
-    background-color: var(--bg-page);
-    color: var(--text-main);
-    border: 1px solid var(--border-ink);
-    padding: 10px;
-    font-weight: 700;
+    background: var(--bg);
+    color: var(--txt);
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 4px;
 }
 
-/* --- 6. GRILLE D'ARTICLES (La "Une" vs le reste) --- */
+body.dark input, body.dark select { border-color: rgba(255,255,255,0.2); }
+
+input { flex-grow: 1; outline: none; }
+input:focus { border-color: var(--accent); }
+
+#filter-button {
+    background: var(--brd);
+    color: var(--bg);
+    border: none;
+    font-weight: 900;
+    cursor: pointer;
+    padding: 0 25px;
+    border-radius: 4px;
+}
+
+/* --- 5. GRILLE ÉDITORIALE --- */
 #articles-container {
     max-width: 1200px;
-    margin: 60px auto;
+    margin: 40px auto;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 40px;
@@ -99,43 +159,89 @@ input, select {
 
 #articles-container > div {
     grid-column: span 12;
-    border-bottom: 1px solid var(--border-ink);
-    padding-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
 @media (min-width: 1024px) {
-    /* Article de la Une : prend 2/3 de la largeur */
+    /* La Une (Article 1) */
     #articles-container > div:first-child {
         grid-column: span 8;
-        border-right: 1px solid var(--border-ink);
+        border-right: 1px solid rgba(0,0,0,0.1);
         padding-right: 40px;
+        border-bottom: none;
     }
-    /* Articles secondaires : colonne de droite */
+
+    /* Articles secondaires */
     #articles-container > div:nth-child(n+2) {
         grid-column: span 4;
     }
+
+    /* Placement côte à côte */
+    #articles-container > div:nth-child(2) {
+        grid-row: 1;
+        grid-column: 9 / 13;
+    }
 }
 
-.article-link {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.4rem;
-    font-weight: 900;
-    color: var(--text-main);
-    text-decoration: none;
-    line-height: 1;
-    margin-bottom: 15px;
-    display: block;
+/* --- 6. CARTES ARTICLES --- */
+.article-card {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: transform 0.3s ease;
 }
 
-.article-link:hover {
-    font-style: italic;
-    color: var(--accent);
+.article-card:hover { transform: translateY(-5px); }
+
+.article-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    filter: grayscale(10%);
+    transition: filter 0.3s ease;
 }
 
-#filter-button {
-    background-color: var(--highlight);
-    color: #000;
-    border: 2px solid var(--border-ink);
+.article-card:hover .article-img { filter: grayscale(0%); }
+
+/* Image de la Une */
+#articles-container > div:first-child .article-img { height: 450px; }
+
+.article-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.7rem;
     font-weight: 900;
     text-transform: uppercase;
 }
+
+.source-tag { color: var(--accent); }
+.time-tag { opacity: 0.6; }
+
+.article-link {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--txt);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.article-link:hover { color: var(--txt-muted); }
+
+/* Titre de la Une */
+#articles-container > div:first-child .article-link { font-size: 2.8rem; letter-spacing: -1px; }
+
+.article-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--txt);
+    opacity: 0.8;
+}
+
+/* --- 7. ÉTATS SOMBRES SPÉCIFIQUES --- */
+body.dark #articles-container > div { border-color: rgba(255,255,255,0.1); }
+body.dark .top-bar { border-color: rgba(255,255,255,0.1); }

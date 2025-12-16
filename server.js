@@ -14,11 +14,16 @@ app.use(express.static('public'));
 const API_KEY = process.env.NEWS_API_KEY;
 const GNEWS_API_KEY = process.env.GNEWS_API_KEY;
 
-// Cache pour les sources
-let cachedSources = [];
+/**
+ * Nettoie le texte des balises HTML pour un rendu "Clean"
+ */
+function cleanDescription(text) {
+    if (!text) return "";
+    return text.replace(/<[^>]*>?/gm, '').substring(0, 200) + "...";
+}
 
 /**
- * 1. Récupère le catalogue des médias filtré par la langue sélectionnée
+ * 1. Récupère les sources autorisées par langue via NewsAPI
  */
 async function fetchSourcesByLanguage(lang) {
     const url = `https://newsapi.org/v2/top-headlines/sources?language=${lang}&apiKey=${API_KEY}`;
@@ -27,24 +32,24 @@ async function fetchSourcesByLanguage(lang) {
         const data = await response.json();
         return data.status === 'ok' ? data.sources : [];
     } catch (e) {
-        console.error("Erreur catalogue sources:", e);
+        console.error("Erreur sources:", e);
         return [];
     }
 }
 
 /**
- * 2. Récupère et formate les flux RSS
+ * 2. Récupère les flux RSS spécifiques à la langue
  */
-async function fetchRSS(url) {
+async function fetchRSS(url, category = 'Actualités') {
     try {
         const feed = await rssParser.parseURL(url);
         return feed.items.map(item => ({
             titre: item.title,
             source: feed.title || new URL(url).hostname,
             lien: item.link,
-            category: 'RSS',
+            category: category,
             publishedAt: item.pubDate,
-            description: item.contentSnippet || item.content,
+            description: cleanDescription(item.contentSnippet || item.content),
             urlToImage: item.enclosure?.url || null
         })).slice(0, 10);
     } catch (e) {
@@ -55,16 +60,16 @@ async function fetchRSS(url) {
 // --- ROUTES ---
 
 app.get('/api/news', async (req, res) => {
+    // Récupère 'fr' ou 'en' envoyé par fetchNews.js
     const lang = req.query.lang || 'fr';
     let allArticles = [];
     const promises = [];
 
-    // A. NEWS API : On moissonne les médias de la langue sélectionnée
+    // A. NEWS API : Filtrage par langue sélectionnée
     if (API_KEY) {
         promises.push((async () => {
             const catalog = await fetchSourcesByLanguage(lang);
             const sourceIds = catalog.map(s => s.id).slice(0, 20).join(',');
-
             if (!sourceIds) return [];
 
             const url = `https://newsapi.org/v2/top-headlines?sources=${sourceIds}&apiKey=${API_KEY}`;
@@ -77,39 +82,47 @@ app.get('/api/news', async (req, res) => {
                 lien: a.url,
                 category: catalog.find(s => s.id === a.source.id)?.category || 'Général',
                 publishedAt: a.publishedAt,
-                description: a.description,
+                description: cleanDescription(a.description),
                 urlToImage: a.urlToImage
             }));
         })());
     }
 
-    // B. GNEWS : Couverture mondiale filtrée par langue
+    // B. GNEWS : Filtrage mondial par langue sélectionnée
     if (GNEWS_API_KEY) {
-        const gnewsUrl = `https://gnews.io/api/v4/top-headlines?lang=${lang}&token=${GNEWS_API_KEY}&max=20`;
+        const gnewsUrl = `https://gnews.io/api/v4/top-headlines?lang=${lang}&token=${GNEWS_API_KEY}&max=15`;
         promises.push(
             fetch(gnewsUrl)
                 .then(r => r.json())
                 .then(data => (data.articles || []).map(a => ({
                     titre: a.title,
-                    source: `GNews: ${a.source.name}`,
+                    source: a.source.name,
                     lien: a.url,
                     category: 'Mondial',
                     publishedAt: a.publishedAt,
-                    description: a.description,
+                    description: cleanDescription(a.description),
                     urlToImage: a.image
                 })))
                 .catch(() => [])
         );
     }
 
-    // C. RSS : Flux manuels spécifiques à la langue
+    // C. RSS : Sélection des flux selon la langue choisie
     const rssList = {
-        'fr': ['https://www.lemonde.fr/rss/une.xml', 'https://www.france24.com/fr/rss'],
-        'en': ['https://techcrunch.com/feed/', 'https://feeds.bbci.co.uk/news/world/rss.xml']
+        'fr': [
+            { url: 'https://www.lemonde.fr/rss/une.xml', cat: 'Politique' },
+            { url: 'https://www.france24.com/fr/rss', cat: 'Actualités' }
+        ],
+        'en': [
+            { url: 'https://techcrunch.com/feed/', cat: 'Tech' },
+            { url: 'https://feeds.bbci.co.uk/news/world/rss.xml', cat: 'Mondial' }
+        ]
     };
-    (rssList[lang] || []).forEach(url => promises.push(fetchRSS(url)));
 
-    // Fusion des résultats et tri chronologique
+    const selectedRSS = rssList[lang] || [];
+    selectedRSS.forEach(item => promises.push(fetchRSS(item.url, item.cat)));
+
+    // Fusion et tri chronologique
     try {
         const results = await Promise.all(promises);
         results.forEach(batch => {
@@ -126,7 +139,7 @@ app.get('/api/news', async (req, res) => {
 app.post('/api/summarize', async (req, res) => {
     const { text } = req.body;
     if (!text) return res.status(400).json({ success: false });
-    await new Promise(r => setTimeout(r, 800)); // Simulation IA
+    // Résumé simple pour démonstration
     res.json({ success: true, summary: `[RÉSUMÉ IA] : ${text.substring(0, 150)}...` });
 });
 

@@ -3,85 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flowly - L'Information Décryptée</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Flowly - Premium News</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body id="body" class="bg-white font-sans text-gray-900 transition-colors duration-300 dark:bg-black dark:text-white">
+<body id="body">
 
-<header class="border-b-8 border-double border-black dark:border-white">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
-        <div class="text-sm font-semibold text-gray-500 uppercase italic tracking-widest">
-            <span id="current-date"></span>
-        </div>
-        <button id="dark-mode-toggle" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition shadow-sm">
-            🌙 <span class="hidden sm:inline">Thème</span>
-        </button>
+<div class="top-bar">
+    <div class="lang-switcher">
+        <span class="lang-btn active" data-lang="fr" onclick="setLanguage('fr')">FRANÇAIS</span> |
+        <span class="lang-btn" data-lang="en" onclick="setLanguage('en')">ENGLISH</span>
     </div>
+</div>
 
-    <div class="max-w-7xl mx-auto px-4 py-12 text-center">
-        <div class="logo-container">
-            <h1 class="text-7xl sm:text-9xl font-black font-serif tracking-tighter mb-2">Flowly</h1>
-            <p class="text-lg italic text-gray-600 dark:text-gray-400">L'information décryptée en temps réel</p>
-        </div>
+<header class="minimal-header">
+    <div class="h-left" id="current-date"></div>
+    <div class="h-center">
+        <h1>Flowly</h1>
+        <p>L'information décryptée en temps réel</p>
     </div>
-
-    <nav class="bg-black text-white dark:bg-gray-900 py-3 text-xs font-bold uppercase tracking-[0.2em]">
-        <div class="max-w-7xl mx-auto flex justify-center flex-wrap gap-8 px-4">
-            <span class="hover:text-yellow-400 cursor-pointer transition">Actualités</span>
-            <span class="hover:text-yellow-400 cursor-pointer transition">Politique</span>
-            <span class="hover:text-yellow-400 cursor-pointer transition">Économie</span>
-            <span class="hover:text-yellow-400 cursor-pointer transition">Sports</span>
-            <span class="hover:text-yellow-400 cursor-pointer transition">Culture</span>
-            <span class="hover:text-yellow-400 cursor-pointer transition">Services</span>
-        </div>
-    </nav>
+    <div class="h-right">
+        <button id="dark-mode-toggle">THÈME</button>
+    </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <section class="mb-12 p-6 bg-gray-50 dark:bg-gray-900 border-y border-black dark:border-white flex flex-col md:flex-row justify-between items-center gap-6">
-        <div class="flex flex-wrap items-center gap-6">
-            <div class="flex items-center gap-3">
-                <label for="language-select" class="font-bold text-sm uppercase">Langue :</label>
-                <select id="language-select" class="p-2 border border-black bg-white dark:bg-black dark:border-white rounded-none outline-none focus:ring-2 focus:ring-yellow-400">
-                    <option value="fr">🇫🇷 Français</option>
-                    <option value="en">🇬🇧 Anglais</option>
-                </select>
-            </div>
-            <div class="flex items-center gap-3">
-                <label for="source-select" class="font-bold text-sm uppercase">Journal :</label>
-                <select id="source-select" class="p-2 border border-black bg-white dark:bg-black dark:border-white rounded-none outline-none focus:ring-2 focus:ring-yellow-400">
-                    <option value="">Toutes les sources</option>
-                </select>
-            </div>
-        </div>
-        <div class="w-full md:w-auto flex gap-2">
-            <input type="text" id="keyword-input" placeholder="Rechercher..." class="flex-grow p-2 border border-black bg-white dark:bg-black dark:border-white rounded-none outline-none focus:ring-2 focus:ring-yellow-400">
-            <button id="filter-button" class="bg-black text-white dark:bg-white dark:text-black px-6 py-2 font-black uppercase hover:bg-gray-800 transition">OK</button>
-        </div>
+<nav class="compact-nav">
+    <span onclick="filterCategory('Actualités')">ACTUALITÉS</span>
+    <span onclick="filterCategory('Politics')">POLITIQUE</span>
+    <span onclick="filterCategory('Business')">ÉCONOMIE</span>
+    <span onclick="filterCategory('Sports')">SPORTS</span>
+    <span onclick="filterCategory('Culture')">CULTURE</span>
+</nav>
+
+<main>
+    <section class="search-bar">
+        <select id="language-select" style="display:none;">
+            <option value="fr">fr</option>
+            <option value="en">en</option>
+        </select>
+
+        <select id="source-select">
+            <option value="">Toutes les sources</option>
+        </select>
+
+        <input type="text" id="keyword-input" placeholder="Rechercher...">
+        <button id="filter-button">OK</button>
+        <button id="clear-button" style="display:none;">X</button>
     </section>
 
-    <div id="loading-indicator" class="hidden text-center py-20">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-black dark:border-white mb-4"></div>
-        <p class="text-xl font-serif italic">Préparation de l'édition...</p>
-    </div>
-
-    <div id="articles-container" class="grid grid-cols-1 md:grid-cols-3 gap-10"></div>
-
-    <div id="no-results" class="hidden text-center py-20 border-2 border-dashed border-gray-300 dark:border-gray-700 mt-10">
-        <p class="font-serif text-3xl opacity-50">Aucun article ne correspond à votre recherche.</p>
-    </div>
+    <div id="loading-indicator" class="hidden">Chargement...</div>
+    <div id="articles-container"></div>
 </main>
-<footer class="bg-black text-white py-16 mt-20 text-center">
-    <h2 class="text-5xl font-serif font-black mb-4 tracking-tighter uppercase">Flowly</h2>
-    <p class="text-gray-500 max-w-md mx-auto italic">Agrégateur de presse internationale propulsé par NewsAPI & GNews.</p>
-</footer>
 
 <script src="js/fetchNews.js"></script>
 <script>
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const dateElement = document.getElementById('current-date');
-    if(dateElement) dateElement.textContent = new Date().toLocaleDateString('fr-FR', options);
+    document.addEventListener("DOMContentLoaded", () => {
+        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+        document.body.classList.add('ready');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', options).toUpperCase();
+    });
+    document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
 </script>
 </body>
 </html>
