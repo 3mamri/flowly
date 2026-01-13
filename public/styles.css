@@ -245,3 +245,20 @@ input:focus { border-color: var(--accent); }
 /* --- 7. ÉTATS SOMBRES SPÉCIFIQUES --- */
 body.dark #articles-container > div { border-color: rgba(255,255,255,0.1); }
 body.dark .top-bar { border-color: rgba(255,255,255,0.1); }
+/* Style pour la catégorie sélectionnée dans la nav */
+.compact-nav span.active {
+    color: var(--accent); /* Utilise la couleur dorée définie dans ton :root */
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 2px;
+}
+
+/* Petit badge pour la catégorie sur l'article (Optionnel) */
+.category-tag {
+    background: rgba(128, 128, 128, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+}
