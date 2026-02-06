@@ -1,71 +1,75 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flowly - Premium News</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body id="body">
 
+<!-- TOP BAR : langues -->
 <div class="top-bar">
-    <div class="lang-switcher">
-        <span class="lang-btn active" data-lang="fr" onclick="setLanguage('fr')">FRANÇAIS</span> |
-        <span class="lang-btn" data-lang="en" onclick="setLanguage('en')">ENGLISH</span>
+    <div class="lang-switcher" role="navigation" aria-label="Choix de langue">
+        <button class="lang-btn" type="button" data-lang="fr">FRANÇAIS</button>
+        <span class="sep" aria-hidden="true">|</span>
+        <button class="lang-btn" type="button" data-lang="en">ENGLISH</button>
     </div>
 </div>
 
+<!-- HEADER -->
 <header class="minimal-header">
-    <div class="h-left" id="current-date"></div>
+    <div class="h-left" id="current-date" aria-label="Date du jour"></div>
+
     <div class="h-center">
         <h1>Flowly</h1>
         <p>L'information décryptée en temps réel</p>
     </div>
+
     <div class="h-right">
-        <button id="dark-mode-toggle">THÈME</button>
+        <button id="dark-mode-toggle" type="button" aria-label="Changer le thème">THÈME</button>
     </div>
 </header>
 
-<nav class="compact-nav">
-        <span onclick="filterCategory('Actualités')">ACTUALITÉS</span>
-        <span onclick="filterCategory('Politique')">POLITIQUE</span>
-        <span onclick="filterCategory('Économie')">ÉCONOMIE</span>
-        <span onclick="filterCategory('Sports')">SPORTS</span>
-        <span onclick="filterCategory('Culture')">CULTURE</span>
+<!-- NAV CATEGORIES -->
+<nav class="compact-nav" aria-label="Catégories">
+    <button type="button" class="nav-cat active" data-cat="Actualités">ACTUALITÉS</button>
+    <button type="button" class="nav-cat" data-cat="Politique">POLITIQUE</button>
+    <button type="button" class="nav-cat" data-cat="Économie">ÉCONOMIE</button>
+    <button type="button" class="nav-cat" data-cat="Sports">SPORTS</button>
+    <button type="button" class="nav-cat" data-cat="Culture">CULTURE</button>
 </nav>
 
 <main>
-    <section class="search-bar">
-        <select id="language-select" style="display:none;">
-            <option value="fr">fr</option>
-            <option value="en">en</option>
-        </select>
-
-        <select id="source-select">
+    <!-- SEARCH / FILTERS -->
+    <section class="search-bar" aria-label="Filtres">
+        <select id="source-select" aria-label="Choisir une source">
             <option value="">Toutes les sources</option>
         </select>
 
-        <input type="text" id="keyword-input" placeholder="Rechercher...">
-        <button id="filter-button">OK</button>
-        <button id="clear-button" style="display:none;">X</button>
+        <input type="text" id="keyword-input" placeholder="Rechercher..." autocomplete="off" />
+        <button id="filter-button" type="button">OK</button>
     </section>
 
-    <div id="loading-indicator" class="hidden">Chargement...</div>
-    <div id="articles-container"></div>
+    <!-- SOURCES LIST -->
+    <div class="sources-panel" aria-label="Liste des sources">
+        <div class="sources-title">Sources</div>
+        <div id="sources-list" class="sources-list"></div>
+    </div>
+
+    <!-- STATES -->
+    <div id="loading-indicator" class="hidden" aria-live="polite">Chargement...</div>
+    <div id="no-results" class="hidden" aria-live="polite">Aucun résultat.</div>
+
+    <!-- ARTICLES -->
+    <div id="articles-container" aria-label="Articles"></div>
 </main>
 
+<!-- SCRIPTS (ordre important) -->
+<script src="js/ui.js"></script>
 <script src="js/fetchNews.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
-        document.body.classList.add('ready');
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', options).toUpperCase();
-    });
-    document.getElementById('dark-mode-toggle').addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-    });
-</script>
+<script src="script.js"></script>
+
 </body>
 </html>

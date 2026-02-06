@@ -1,50 +1,77 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Inter:wght@400;700;900&display=swap');
 
-/* --- 1. CONFIGURATION DES VARIABLES --- */
+/* ----------------- VARIABLES ----------------- */
 :root {
-    --bg: #f9f7f2;       /* Fond crème papier journal */
-    --txt: #000;
-    --txt-muted: #555;
-    --brd: #000;
-    --accent: #fbbf24;   /* Jaune premium */
+    --bg: #f9f7f2;              /* crème papier */
+    --txt: #0a0a0a;
+    --txt-muted: #5b5b5b;
+    --brd: rgba(0,0,0,0.18);    /* bordure douce */
+    --brd-strong: rgba(0,0,0,0.75);
+    --accent: #fbbf24;          /* or */
     --card-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
 body.dark {
-    --bg: #050505;       /* Noir très sombre */
-    --txt: #fff;
-    --txt-muted: #aaa;
-    --brd: #fbbf24;      /* Bordures dorées en mode sombre */
+    --bg: #050505;
+    --txt: #ffffff;
+    --txt-muted: #a9a9a9;
+    --brd: rgba(251,191,36,0.55);
+    --brd-strong: rgba(251,191,36,0.95);
     --card-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* --- 2. STRUCTURE GLOBALE --- */
+/* ----------------- BASE ----------------- */
 html, body {
-    background-color: var(--bg) !important;
+    background-color: var(--bg);
     color: var(--txt);
     margin: 0;
     font-family: 'Inter', sans-serif;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    transition: background-color 0.35s ease, color 0.35s ease;
 }
-
-body { opacity: 0; }
-body.ready { opacity: 1; transition: opacity 0.5s ease; }
 
 .hidden { display: none !important; }
 
-/* --- 3. HEADER & NAVIGATION --- */
+/* ----------------- TOP BAR ----------------- */
 .top-bar {
     text-align: center;
     padding: 8px 0;
     font-size: 10px;
     font-weight: 900;
     letter-spacing: 1px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
-.lang-switcher span { cursor: pointer; opacity: 0.4; margin: 0 5px; transition: opacity 0.2s; }
-.lang-switcher span.active { opacity: 1; text-decoration: underline; }
+.lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
 
+.lang-switcher .sep { opacity: 0.35; }
+
+.lang-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 900;
+    letter-spacing: 1px;
+    opacity: 0.45;
+    padding: 2px 4px;
+    text-transform: uppercase;
+    color: var(--txt);
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.lang-btn:hover { opacity: 0.85; }
+
+.lang-btn.active {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ----------------- HEADER ----------------- */
 .minimal-header {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
@@ -52,27 +79,35 @@ body.ready { opacity: 1; transition: opacity 0.5s ease; }
     padding: 10px 40px 5px 40px;
 }
 
+.h-left {
+    font-size: 10px;
+    font-weight: 900;
+    opacity: 0.65;
+}
+
+.h-right { text-align: right; }
+
 .h-center h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(40px, 8vw, 80px);
-    margin: 0 !important;
-    line-height: 0.7 !important;
+    margin: 0;
+    line-height: 0.7;
     letter-spacing: -4px;
     text-align: center;
 }
 
 .h-center p {
     font-size: 11px;
-    margin: 8px 0 0 0 !important;
+    margin: 8px 0 0 0;
     text-align: center;
     font-style: italic;
-    opacity: 0.7;
+    opacity: 0.75;
     text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--txt-muted);
 }
 
-.h-left { font-size: 10px; font-weight: 900; opacity: 0.6; }
-.h-right { text-align: right; }
-
+/* Bouton thème */
 #dark-mode-toggle {
     background: var(--txt);
     color: var(--bg);
@@ -82,14 +117,15 @@ body.ready { opacity: 1; transition: opacity 0.5s ease; }
     font-weight: 900;
     border-radius: 20px;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-#dark-mode-toggle:hover { transform: scale(1.05); }
+#dark-mode-toggle:hover { transform: scale(1.05); opacity: 0.95; }
 
+/* ----------------- NAV ----------------- */
 .compact-nav {
-    border-top: 1px solid var(--brd);
-    border-bottom: 1px solid var(--brd);
+    border-top: 1px solid var(--brd-strong);
+    border-bottom: 1px solid var(--brd-strong);
     padding: 12px 0;
     text-align: center;
     margin-top: 10px;
@@ -99,18 +135,28 @@ body.ready { opacity: 1; transition: opacity 0.5s ease; }
     z-index: 100;
 }
 
-.compact-nav span {
-    margin: 0 15px;
+.compact-nav .nav-cat {
+    background: transparent;
+    border: none;
+    margin: 0 12px;
     font-size: 11px;
     font-weight: 900;
     text-transform: uppercase;
+    letter-spacing: 0.08em;
     cursor: pointer;
-    transition: color 0.2s;
+    color: var(--txt);
+    padding: 6px 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.compact-nav span:hover { color: var(--accent); }
+.compact-nav .nav-cat:hover { color: var(--accent); }
 
-/* --- 4. BARRE DE RECHERCHE --- */
+.compact-nav .nav-cat.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+}
+
+/* ----------------- SEARCH BAR ----------------- */
 .search-bar {
     max-width: 1000px;
     margin: 20px auto;
@@ -118,36 +164,128 @@ body.ready { opacity: 1; transition: opacity 0.5s ease; }
     gap: 10px;
     padding: 10px;
     background: var(--bg);
-    border: 1px solid var(--brd);
-    border-radius: 8px;
+    border: 1px solid var(--brd-strong);
+    border-radius: 10px;
     box-shadow: var(--card-shadow);
 }
 
 input, select {
     background: var(--bg);
     color: var(--txt);
-    border: 1px solid rgba(0,0,0,0.1);
-    padding: 8px;
+    border: 1px solid rgba(0,0,0,0.14);
+    padding: 10px;
     font-size: 12px;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
-body.dark input, body.dark select { border-color: rgba(255,255,255,0.2); }
+body.dark input, body.dark select {
+    border-color: rgba(255,255,255,0.18);
+}
 
-input { flex-grow: 1; outline: none; }
-input:focus { border-color: var(--accent); }
+input {
+    flex-grow: 1;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(251,191,36,0.18);
+}
 
 #filter-button {
-    background: var(--brd);
+    background: var(--txt);
     color: var(--bg);
     border: none;
     font-weight: 900;
     cursor: pointer;
-    padding: 0 25px;
-    border-radius: 4px;
+    padding: 0 22px;
+    border-radius: 8px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-/* --- 5. GRILLE ÉDITORIALE --- */
+#filter-button:hover { transform: translateY(-1px); opacity: 0.95; }
+
+/* ----------------- SOURCES PANEL ----------------- */
+.sources-panel {
+    max-width: 1000px;
+    margin: 12px auto 0 auto;
+    padding: 10px;
+    border: 1px solid var(--brd-strong);
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    background: var(--bg);
+}
+
+.sources-title {
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.75;
+    margin-bottom: 8px;
+}
+
+/* Important : si beaucoup de sources -> scroll */
+.sources-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 160px;
+    overflow: auto;
+    padding-right: 4px;
+}
+
+.sources-empty {
+    font-size: 12px;
+    opacity: 0.8;
+    padding: 6px 0;
+}
+
+.source-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.12);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--txt);
+    background: rgba(0,0,0,0.02);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+body.dark .source-pill {
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+}
+
+.source-pill:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent);
+}
+
+/* ----------------- LOADING / NO RESULTS ----------------- */
+#loading-indicator {
+    max-width: 1000px;
+    margin: 10px auto 0 auto;
+    padding: 10px 14px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+#no-results {
+    max-width: 1000px;
+    margin: 14px auto 0 auto;
+    padding: 14px;
+    border: 1px dashed var(--brd-strong);
+    border-radius: 10px;
+    text-align: center;
+    opacity: 0.85;
+}
+
+/* ----------------- GRID ÉDITORIALE ----------------- */
+/* IMPORTANT : le JS ajoute .article-card directement dans #articles-container */
 #articles-container {
     max-width: 1200px;
     margin: 40px auto;
@@ -157,108 +295,132 @@ input:focus { border-color: var(--accent); }
     padding: 0 20px;
 }
 
-#articles-container > div {
+/* Mobile : 1 colonne */
+#articles-container .article-card {
     grid-column: span 12;
-    padding-bottom: 30px;
+    padding-bottom: 26px;
     border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
+body.dark #articles-container .article-card {
+    border-bottom-color: rgba(255,255,255,0.10);
+}
+
+/* Desktop : Une + colonne droite */
 @media (min-width: 1024px) {
-    /* La Une (Article 1) */
-    #articles-container > div:first-child {
+    #articles-container .article-card:first-child {
         grid-column: span 8;
-        border-right: 1px solid rgba(0,0,0,0.1);
         padding-right: 40px;
+        border-right: 1px solid rgba(0,0,0,0.10);
         border-bottom: none;
     }
 
-    /* Articles secondaires */
-    #articles-container > div:nth-child(n+2) {
+    body.dark #articles-container .article-card:first-child {
+        border-right-color: rgba(255,255,255,0.12);
+    }
+
+    #articles-container .article-card:nth-child(n+2) {
         grid-column: span 4;
     }
 
-    /* Placement côte à côte */
-    #articles-container > div:nth-child(2) {
+    #articles-container .article-card:nth-child(2) {
         grid-row: 1;
         grid-column: 9 / 13;
     }
 }
 
-/* --- 6. CARTES ARTICLES --- */
+/* ----------------- CARTE ARTICLE ----------------- */
 .article-card {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    transition: transform 0.3s ease;
+    gap: 14px;
+    transition: transform 0.25s ease;
 }
 
-.article-card:hover { transform: translateY(-5px); }
+.article-card:hover { transform: translateY(-4px); }
 
 .article-img {
     width: 100%;
     height: 220px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: var(--card-shadow);
     filter: grayscale(10%);
-    transition: filter 0.3s ease;
+    transition: filter 0.25s ease;
 }
 
 .article-card:hover .article-img { filter: grayscale(0%); }
 
-/* Image de la Une */
-#articles-container > div:first-child .article-img { height: 450px; }
+/* image Une */
+#articles-container .article-card:first-child .article-img {
+    height: 450px;
+}
 
 .article-meta {
     display: flex;
-    gap: 12px;
+    gap: 10px;
+    align-items: center;
     font-size: 0.7rem;
     font-weight: 900;
     text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .source-tag { color: var(--accent); }
-.time-tag { opacity: 0.6; }
+
+.category-tag {
+    background: rgba(128, 128, 128, 0.10);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--accent);
+}
 
 .article-link {
     font-family: 'Playfair Display', serif;
     font-size: 1.6rem;
     font-weight: 900;
-    line-height: 1.2;
+    line-height: 1.15;
     color: var(--txt);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.2s ease;
 }
 
 .article-link:hover { color: var(--txt-muted); }
 
-/* Titre de la Une */
-#articles-container > div:first-child .article-link { font-size: 2.8rem; letter-spacing: -1px; }
+#articles-container .article-card:first-child .article-link {
+    font-size: 2.6rem;
+    letter-spacing: -1px;
+}
 
 .article-desc {
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--txt);
-    opacity: 0.8;
+    opacity: 0.82;
 }
 
-/* --- 7. ÉTATS SOMBRES SPÉCIFIQUES --- */
-body.dark #articles-container > div { border-color: rgba(255,255,255,0.1); }
-body.dark .top-bar { border-color: rgba(255,255,255,0.1); }
-/* Style pour la catégorie sélectionnée dans la nav */
-.compact-nav span.active {
-    color: var(--accent); /* Utilise la couleur dorée définie dans ton :root */
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 2px;
+/* ----------------- RESPONSIVE ----------------- */
+@media (max-width: 700px) {
+    .minimal-header {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px 16px;
+        text-align: center;
+    }
+    .h-right { text-align: center; }
+    .compact-nav .nav-cat { margin: 0 8px; }
+    .search-bar { flex-direction: column; }
+    #filter-button { padding: 12px; }
+}
+/* Empêche la nav sticky de gêner les clics sur les premiers éléments */
+main {
+    padding-top: 8px;
 }
 
-/* Petit badge pour la catégorie sur l'article (Optionnel) */
-.category-tag {
-    background: rgba(128, 128, 128, 0.1);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--accent);
+/* Assure que les pastilles restent cliquables */
+.sources-panel, .sources-list, .source-pill {
+    pointer-events: auto;
 }
