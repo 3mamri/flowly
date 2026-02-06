@@ -29,12 +29,11 @@ Le projet est pensé pour être :
 
 ### Backend
 - Node.js
-- Express
 
 ### Frontend
 - HTML
 - CSS
-- JavaScript (Vanilla)
+- JavaScript
 
 ### Outils
 - PhpStorm
@@ -59,9 +58,8 @@ Le projet est pensé pour être :
 
 ## 🎨 Personnalisation
 - Dark Mode
-- Changement de langue à chaud
+- Changement de langue
 - Historique de lecture
-- Simulation de résumé IA pour chaque article
 
 ---
 
