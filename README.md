@@ -10,7 +10,6 @@
   <img src="https://img.shields.io/badge/Express-Backend-black">
   <img src="https://img.shields.io/badge/VanillaJS-Frontend-yellow">
   <img src="https://img.shields.io/badge/Status-Active-success">
-  <img src="https://img.shields.io/badge/License-MIT-blue">
 </p>
 
 ---
