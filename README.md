@@ -66,7 +66,7 @@ Le projet est pensé pour être :
 # ⚙️ Installation
 
 ## 1️⃣ Prérequis
-- Node.js 18+
+- Node.js
 - Une clé NewsAPI
 
 ---
