@@ -6,9 +6,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-18+-green">
-  <img src="https://img.shields.io/badge/Express-Backend-black">
-  <img src="https://img.shields.io/badge/VanillaJS-Frontend-yellow">
+  <img src="https://img.shields.io/badge/Node.js-green">
+  <img src="https://img.shields.io/badge/">
+  <img src="https://img.shields.io/badge/JS-Frontend-yellow">
   <img src="https://img.shields.io/badge/Status-Active-success">
 </p>
 
