@@ -1,102 +1,131 @@
-# 📰 Flowly : Agrégateur d'Actualités
+📰 Flowly — Agrégateur d’Actualités Moderne
 
-Flowly est un agrégateur d’actualités moderne, rapide et personnalisable. Il combine **NewsAPI** et une sélection de **flux RSS** pour fournir un fil d’actualité complet, filtrable et dynamique. Le projet est construit avec **Node.js (Express)** côté backend et un frontend **HTML/CSS/JavaScript pur**, compatible avec PhpStorm.
+Flowly est un agrégateur d’actualités rapide, léger et personnalisable combinant NewsAPI et des flux RSS pour fournir un fil d’information complet, filtrable en temps réel.
 
----
+Stack technique :
 
-## ✨ Fonctionnalités
+Backend → Node.js 
 
-### 🗂️ Agrégation
+Frontend → HTML / CSS 
 
-* **Sources Multiples Maximisées** : Récupère automatiquement toutes les sources disponibles via NewsAPI.
-* **Support RSS** : Ajout de flux RSS externes selon la langue.
-* **Filtrage linguistique** : Français et Anglais.
+IDE recommandé → PhpStorm
 
-### 🔎 Filtrage Dynamique
+✨ Fonctionnalités
+🗂️ Agrégation intelligente
 
-* **Sélection Multi-Média** : Choix d’un ou plusieurs médias, ou aucun.
-* **Filtre par mot-clé** : Affine les résultats instantanément.
+Sources NewsAPI automatiques
 
-### 🛠️ Personnalisation
+Ajout de flux RSS externes
 
-* **Changement de langue dynamique** : Basculer FR ↔ EN change instantanément le flux.
-* **Dark Mode** fluide.
-* **Historique de lecture** et possibilité de cacher certaines sources.
-* **Simulation d’un résumé IA** pour chaque article.
+Support FR 🇫🇷 / EN 🇬🇧
 
----
+🔎 Filtrage dynamique
 
-## 🌍 Récupération des Médias NewsAPI (FR/EN – France)
+Multi-sélection de médias
 
-Flowly récupère uniquement les médias en **français ou anglais** et **basés en France**, en appelant l’endpoint suivant :
+Recherche par mot-clé instantanée
 
-```
-https://newsapi.org/v2/top-headlines/sources?language=fr,en&country=fr&apiKey=4dce789306e145cf9742b48fc50bf366
-```
+Masquage de sources
 
-Exemple `.env` :
+Tri fluide côté client
 
-```
-NEWS_API_KEY=4dce789306e145cf9742b48fc50bf366
-```
+🎨 Personnalisation
 
----
+Dark Mode
 
-## 🛠️ Installation
+Changement de langue à chaud
 
-### 1. Prérequis
+Historique de lecture
 
-* **Node.js **
-* **Une clé API NewsAPI**
-* **PhpStorm**
+Résumé IA simulé pour chaque article
 
-### 2. Installation des dépendances
+⚙️ Installation
+1️⃣ Prérequis
 
-```bash
+Node.js 18+
+
+Clé NewsAPI
+
+2️⃣ Cloner le projet
+git clone https://github.com/3mamri/flowly.git
+cd flowly
+
+3️⃣ Installer les dépendances
 npm install
-```
 
-### 3. Configuration
+4️⃣ Configuration
 
-Créez un fichier `.env` :
+Créer .env :
 
-```
-NEWS_API_KEY=4dce789306e145cf9742b48fc50bf366
-```
+NEWS_API_KEY=YOUR_API_KEY_HERE
 
-### 4. Lancer le serveur
+5️⃣ Lancer
 
-En mode développement :
+Dev :
 
-```bash
 npm run dev
-```
 
-Le serveur démarre sur :
-**[http://localhost:3000](http://localhost:3000)**
 
-En cas d’erreur `EADDRINUSE`, libérez le port 3000.
+Prod :
 
----
+npm start
 
-## 🔧 Fonctionnement Interne
 
-### 1. Chargement des données
+👉 http://localhost:3000
 
-* Le frontend envoie la langue sélectionnée (FR/EN) au backend.
-* Le backend récupère :
+🧠 Architecture du projet
+flowly/
+│
+├── public/        → Frontend
+├── src/
+│   ├── routes/    → API routes
+│   ├── services/  → NewsAPI + RSS logic
+│   ├── utils/     → helpers (dedupe, normalize…)
+│
+├── server.js      → Express server
+├── .env
+├── .gitignore
 
-    * Les gros titres de NewsAPI pour cette langue.
-    * Les flux RSS associés.
+🔄 Flux interne
 
-### 2. Filtrage (fetchNews.js)
+Frontend → sélection langue
 
-Ordre d’application :
+Backend →
 
-1. **Sources masquées** → exclues.
-2. **Filtrage par média** (multi-sélection).
-3. **Filtre par mot-clé**.
+NewsAPI
 
-Ce fonctionnement garantit un affichage fluide et optimisé.
+RSS
 
----
+Normalisation + déduplication
+
+Filtrage client (sources → médias → mots-clés)
+
+🚀 Améliorations futures (roadmap)
+
+Auth utilisateurs
+
+Favoris persistants (DB)
+
+Résumés IA réels (OpenAI API)
+
+PWA / offline mode
+
+Docker
+
+🛡️ Bonnes pratiques
+
+Le repo ignore :
+
+node_modules/
+.env
+.idea/
+dist/
+
+
+Installation après clone :
+
+npm install
+
+👨‍💻 Auteur
+
+Projet développé par Amirouche Mamri
