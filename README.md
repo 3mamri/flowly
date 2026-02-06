@@ -1,120 +1,154 @@
-📰 Flowly — Agrégateur d’Actualités Moderne
+<h1 align="center">📰 Flowly</h1>
 
-Flowly est un agrégateur d’actualités rapide, léger et personnalisable combinant NewsAPI et des flux RSS pour fournir un fil d’information complet, filtrable en temps réel.
+<p align="center">
+  <strong>Agrégateur d’actualités moderne, rapide et personnalisable</strong><br>
+  Construit avec Node.js, Express et JavaScript Vanilla
+</p>
 
-Stack technique :
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-18+-green">
+  <img src="https://img.shields.io/badge/Express-Backend-black">
+  <img src="https://img.shields.io/badge/VanillaJS-Frontend-yellow">
+  <img src="https://img.shields.io/badge/Status-Active-success">
+  <img src="https://img.shields.io/badge/License-MIT-blue">
+</p>
 
-Backend → Node.js 
+---
 
-Frontend → HTML / CSS 
+# 📰 Flowly — Agrégateur d'Actualités
 
-IDE recommandé → PhpStorm
+Flowly est un agrégateur d’actualités **rapide, léger et personnalisable**.  
+Il combine **NewsAPI** et plusieurs **flux RSS** pour proposer un fil d’information complet, filtrable et dynamique.
 
-✨ Fonctionnalités
-🗂️ Agrégation intelligente
+Le projet est pensé pour être :
+- ⚡ rapide
+- 🧩 simple à déployer
+- 🎯 facilement extensible
+- 🧠 propre côté architecture
 
-Sources NewsAPI automatiques
+---
 
-Ajout de flux RSS externes
+## 🚀 Stack Technique
 
-Support FR 🇫🇷 / EN 🇬🇧
+### Backend
+- Node.js
+- Express
 
-🔎 Filtrage dynamique
+### Frontend
+- HTML
+- CSS
+- JavaScript (Vanilla)
 
-Multi-sélection de médias
+### Outils
+- PhpStorm
+- Git / GitHub
 
-Recherche par mot-clé instantanée
+---
 
-Masquage de sources
+# ✨ Fonctionnalités
 
-Tri fluide côté client
+## 🗂️ Agrégation intelligente
+- Récupération automatique des sources NewsAPI
+- Support des flux RSS externes
+- Fusion des résultats
+- Suppression des doublons
+- FR 🇫🇷 / EN 🇬🇧
 
-🎨 Personnalisation
+## 🔎 Filtrage dynamique
+- Sélection multi-média
+- Recherche par mot-clé instantanée
+- Masquage de sources
+- Mise à jour en temps réel (sans rechargement)
 
-Dark Mode
+## 🎨 Personnalisation
+- Dark Mode
+- Changement de langue à chaud
+- Historique de lecture
+- Simulation de résumé IA pour chaque article
 
-Changement de langue à chaud
+---
 
-Historique de lecture
+# ⚙️ Installation
 
-Résumé IA simulé pour chaque article
+## 1️⃣ Prérequis
+- Node.js 18+
+- Une clé NewsAPI
 
-⚙️ Installation
-1️⃣ Prérequis
+---
 
-Node.js 18+
+## 2️⃣ Cloner le projet
 
-Clé NewsAPI
-
-2️⃣ Cloner le projet
+```bash
 git clone https://github.com/3mamri/flowly.git
 cd flowly
-
 3️⃣ Installer les dépendances
 npm install
 
 4️⃣ Configuration
 
-Créer .env :
+Créer un fichier .env à la racine :
 
 NEWS_API_KEY=YOUR_API_KEY_HERE
 
-5️⃣ Lancer
 
-Dev :
+⚠️ Ne jamais commit ce fichier.
 
+5️⃣ Lancer le serveur
+Développement
 npm run dev
 
-
-Prod :
-
+Production
 npm start
 
 
+Serveur disponible sur :
 👉 http://localhost:3000
 
 🧠 Architecture du projet
 flowly/
 │
-├── public/        → Frontend
-├── src/
-│   ├── routes/    → API routes
-│   ├── services/  → NewsAPI + RSS logic
-│   ├── utils/     → helpers (dedupe, normalize…)
+├── public/            → Frontend (HTML / CSS / JS)
+│   ├── js/
+│   ├── styles.css
 │
-├── server.js      → Express server
-├── .env
+├── src/
+│   ├── routes/        → Routes API Express
+│   ├── services/      → Logique NewsAPI + RSS
+│   ├── utils/         → Helpers (dedupe, normalize…)
+│
+├── server.js          → Point d’entrée serveur
+├── .env               → Variables d’environnement (non versionné)
 ├── .gitignore
+└── package.json
 
-🔄 Flux interne
+🔄 Fonctionnement interne
+1. Chargement
 
-Frontend → sélection langue
+Le frontend envoie la langue sélectionnée au backend.
 
-Backend →
+2. Backend
 
-NewsAPI
+Appel NewsAPI
 
-RSS
+Récupération flux RSS
 
-Normalisation + déduplication
+Normalisation des données
 
-Filtrage client (sources → médias → mots-clés)
+Déduplication
 
-🚀 Améliorations futures (roadmap)
+3. Frontend (ordre des filtres)
 
-Auth utilisateurs
+Sources masquées
 
-Favoris persistants (DB)
+Médias sélectionnés
 
-Résumés IA réels (OpenAI API)
+Mot-clé
 
-PWA / offline mode
+➡️ Affichage instantané et fluide
 
-Docker
+🔐 Bonnes pratiques Git
 
-🛡️ Bonnes pratiques
-
-Le repo ignore :
+Le projet ignore :
 
 node_modules/
 .env
@@ -122,10 +156,34 @@ node_modules/
 dist/
 
 
-Installation après clone :
+Après clone :
 
 npm install
 
+🚀 Roadmap (évolutions futures)
+
+Authentification utilisateur
+
+Favoris persistants (DB)
+
+Vrais résumés IA (OpenAI API)
+
+PWA / Offline mode
+
+Docker
+
+Déploiement cloud
+
 👨‍💻 Auteur
 
-Projet développé par Amirouche Mamri
+Développé par Amirouche Mamri
+
+Projet personnel pour apprendre :
+
+Architecture backend Express
+
+Manipulation d’API REST
+
+Traitement RSS
+
+Filtrage dynamique frontend
