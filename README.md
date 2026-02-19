@@ -79,3 +79,15 @@ flowly/
 ├── src/             # Backend (routes, services, utils)
 ├── server.js
 └── .env
+
+🎓 Objectif
+
+Projet académique démontrant :
+
+Utilisation d’API REST
+
+Architecture backend modulaire
+
+Gestion d’état frontend
+
+Fusion et traitement de données
