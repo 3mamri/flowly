@@ -1,19 +1,32 @@
 <h1 align="center">📰 Flowly</h1>
 
-📰 Flowly — Agrégateur d’Actualités
+Agrégateur d’Actualités Moderne
 
-Flowly est un agrégateur d’actualités moderne développé avec Node.js (Express) et HTML/CSS/JavaScript vanilla.
-Il combine NewsAPI et plusieurs flux RSS pour proposer un fil d’actualité dynamique, filtrable et bilingue.
+Flowly est un agrégateur d’actualités développé avec Node.js (Express) et HTML / CSS / JavaScript vanilla.
 
-✨ Fonctionnalités
+Il combine NewsAPI et plusieurs flux RSS afin de proposer un fil d’actualité dynamique, filtrable et bilingue.
 
-🌍 Support Français / Anglais
+🚀 Fonctionnalités
 
-🗂️ Catégories : Actualités, Politique, Économie, Sports, Culture
+🌍 Support Français 🇫🇷 / Anglais 🇬🇧
 
-🔎 Filtrage par média et par mot-clé
+🗂️ Catégories :
 
-🔄 Fusion de données multi-sources (NewsAPI + RSS)
+Actualités
+
+Politique
+
+Économie
+
+Sports
+
+Culture
+
+🔎 Filtrage par média
+
+🔍 Recherche par mot-clé
+
+🔄 Fusion NewsAPI + RSS
 
 🧹 Suppression des doublons
 
@@ -21,26 +34,38 @@ Il combine NewsAPI et plusieurs flux RSS pour proposer un fil d’actualité dyn
 
 🔗 Sources cliquables
 
-⚠️ Gestion propre des erreurs et des données manquantes
+⚠️ Gestion propre des erreurs et fallback si données manquantes
 
-⚙️ Installation
-1. Installer les dépendances
+🛠️ Installation
+1️⃣ Cloner le projet
+git clone https://github.com/3mamri/flowly.git
+cd flowly
+
+2️⃣ Installer les dépendances
 npm install
 
-2. Créer un fichier .env
+3️⃣ Configuration
+
+Créer un fichier .env à la racine :
+
 NEWS_API_KEY=VOTRE_CLE_API
 GNEWS_API_KEY=VOTRE_CLE_API
 
-3. Lancer le serveur
+
+⚠️ Ne jamais exposer vos clés API dans un dépôt public.
+
+4️⃣ Lancer le serveur
 npm run dev
 
 
-Accès :
-👉 http://localhost:3000
+Le serveur démarre sur :
 
-🧠 Fonctionnement
+http://localhost:3000
 
-Le frontend envoie la langue et la catégorie sélectionnées au backend.
+⚙️ Fonctionnement
+
+Le frontend envoie la langue et la catégorie sélectionnées.
+
 Le backend :
 
 récupère les articles via NewsAPI
@@ -49,6 +74,28 @@ complète avec des flux RSS
 
 normalise et fusionne les données
 
-renvoie un format unique au frontend
+supprime les doublons
 
-Le filtrage final (catégorie, source, mot-clé) est appliqué côté client pour un affichage fluide.
+Le frontend applique les filtres (catégorie, source, mot-clé) pour un affichage fluide.
+
+📂 Structure simplifiée
+flowly/
+│
+├── public/          # Frontend
+├── src/             # Backend (routes, services, utils)
+├── server.js
+└── .env
+
+🎓 Objectif pédagogique
+
+Projet réalisé dans un cadre académique pour démontrer :
+
+Utilisation d’API REST
+
+Architecture backend modulaire
+
+Gestion d’état frontend
+
+Fusion et normalisation de données
+
+Interface moderne et responsive
