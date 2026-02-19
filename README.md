@@ -58,7 +58,6 @@ Créer un fichier .env à la racine :
 
 NEWS_API_KEY=VOTRE_CLE_API
 GNEWS_API_KEY=VOTRE_CLE_API
-⚠️ Ne jamais exposer vos clés API dans un dépôt public.
 
 4️⃣ Lancer le serveur
 npm run dev
