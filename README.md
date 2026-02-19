@@ -1,184 +1,54 @@
 <h1 align="center">📰 Flowly</h1>
 
-<p align="center">
-  <strong>Agrégateur d’actualités moderne, rapide et personnalisable</strong><br>
-  Construit avec Node.js, Express et JavaScript Vanilla
-</p>
+📰 Flowly — Agrégateur d’Actualités
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node.js-green">
-  <img src="https://img.shields.io/badge/JS-Frontend-yellow">
-</p>
+Flowly est un agrégateur d’actualités moderne développé avec Node.js (Express) et HTML/CSS/JavaScript vanilla.
+Il combine NewsAPI et plusieurs flux RSS pour proposer un fil d’actualité dynamique, filtrable et bilingue.
 
----
+✨ Fonctionnalités
 
-# 📰 Flowly — Agrégateur d'Actualités
+🌍 Support Français / Anglais
 
-Flowly est un agrégateur d’actualités **rapide, léger et personnalisable**.  
-Il combine **NewsAPI** et plusieurs **flux RSS** pour proposer un fil d’information complet, filtrable et dynamique.
+🗂️ Catégories : Actualités, Politique, Économie, Sports, Culture
 
-Le projet est pensé pour être :
-- ⚡ rapide
-- 🧩 simple à déployer
-- 🎯 facilement extensible
-- 🧠 propre côté architecture
+🔎 Filtrage par média et par mot-clé
 
----
+🔄 Fusion de données multi-sources (NewsAPI + RSS)
 
-## 🚀 Stack Technique
+🧹 Suppression des doublons
 
-### Backend
-- Node.js
+🌙 Dark Mode
 
-### Frontend
-- HTML
-- CSS
-- JavaScript
+🔗 Sources cliquables
 
-### Outils
-- PhpStorm
-- Git / GitHub
+⚠️ Gestion propre des erreurs et des données manquantes
 
----
-
-# ✨ Fonctionnalités
-
-## 🗂️ Agrégation intelligente
-- Récupération automatique des sources NewsAPI
-- Support des flux RSS externes
-- Fusion des résultats
-- Suppression des doublons
-- FR 🇫🇷 / EN 🇬🇧
-
-## 🔎 Filtrage dynamique
-- Sélection multi-média
-- Recherche par mot-clé instantanée
-- Masquage de sources
-- Mise à jour en temps réel (sans rechargement)
-
-## 🎨 Personnalisation
-- Dark Mode
-- Changement de langue
-- Historique de lecture
-
----
-
-# ⚙️ Installation
-
-## 1️⃣ Prérequis
-- Node.js
-- Une clé NewsAPI
-
----
-
-## 2️⃣ Cloner le projet
-
-```bash
-git clone https://github.com/3mamri/flowly.git
-cd flowly
-3️⃣ Installer les dépendances
+⚙️ Installation
+1. Installer les dépendances
 npm install
 
-4️⃣ Configuration
+2. Créer un fichier .env
+NEWS_API_KEY=VOTRE_CLE_API
+GNEWS_API_KEY=VOTRE_CLE_API
 
-Créer un fichier .env à la racine :
-
-NEWS_API_KEY=YOUR_API_KEY_HERE
-
-
-⚠️ Ne jamais commit ce fichier.
-
-5️⃣ Lancer le serveur
-Développement
+3. Lancer le serveur
 npm run dev
 
-Production
-npm start
 
-
-Serveur disponible sur :
+Accès :
 👉 http://localhost:3000
 
-🧠 Architecture du projet
-flowly/
-│
-├── public/            → Frontend (HTML / CSS / JS)
-│   ├── js/
-│   ├── styles.css
-│
-├── src/
-│   ├── routes/        → Routes API Express
-│   ├── services/      → Logique NewsAPI + RSS
-│   ├── utils/         → Helpers (dedupe, normalize…)
-│
-├── server.js          → Point d’entrée serveur
-├── .env               → Variables d’environnement (non versionné)
-├── .gitignore
-└── package.json
+🧠 Fonctionnement
 
-🔄 Fonctionnement interne
-1. Chargement
+Le frontend envoie la langue et la catégorie sélectionnées au backend.
+Le backend :
 
-Le frontend envoie la langue sélectionnée au backend.
+récupère les articles via NewsAPI
 
-2. Backend
+complète avec des flux RSS
 
-Appel NewsAPI
+normalise et fusionne les données
 
-Récupération flux RSS
+renvoie un format unique au frontend
 
-Normalisation des données
-
-Déduplication
-
-3. Frontend (ordre des filtres)
-
-Sources masquées
-
-Médias sélectionnés
-
-Mot-clé
-
-➡️ Affichage instantané et fluide
-
-🔐 Bonnes pratiques Git
-
-Le projet ignore :
-
-node_modules/
-.env
-.idea/
-dist/
-
-
-Après clone :
-
-npm install
-
-🚀 Roadmap (évolutions futures)
-
-Authentification utilisateur
-
-Favoris persistants (DB)
-
-Vrais résumés IA (OpenAI API)
-
-PWA / Offline mode
-
-Docker
-
-Déploiement cloud
-
-👨‍💻 Auteur
-
-Développé par Amirouche Mamri
-
-Projet personnel pour apprendre :
-
-Architecture backend Express
-
-Manipulation d’API REST
-
-Traitement RSS
-
-Filtrage dynamique frontend
+Le filtrage final (catégorie, source, mot-clé) est appliqué côté client pour un affichage fluide.
