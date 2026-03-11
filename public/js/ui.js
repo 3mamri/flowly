@@ -1,5 +1,4 @@
 // public/js/ui.js
-// Petit module UI : rendu DOM uniquement (pas de fetch, pas de logique métier)
 
 function setLoading(loadingIndicatorEl, isLoading) {
     if (!loadingIndicatorEl) return;
@@ -9,7 +8,10 @@ function setLoading(loadingIndicatorEl, isLoading) {
 function showMessage(messageEl, show, text) {
     if (!messageEl) return;
     messageEl.classList.toggle('hidden', !show);
-    if (show && typeof text === 'string') messageEl.textContent = text;
+
+    if (show && typeof text === 'string') {
+        messageEl.textContent = text;
+    }
 }
 
 function safeUrl(url) {
@@ -22,127 +24,194 @@ function safeUrl(url) {
     }
 }
 
+
+/* ---------------- SOURCES LIST ---------------- */
+
 function renderSourcesList(sourcesListEl, sources) {
     if (!sourcesListEl) return;
     sourcesListEl.textContent = '';
 
     if (!Array.isArray(sources) || sources.length === 0) {
-        const div = document.createElement('div');
-        div.className = 'sources-empty';
-        div.textContent = 'Aucune source trouvée.';
-        sourcesListEl.appendChild(div);
+        sourcesListEl.innerHTML = '<div class="sources-empty">Aucune source disponible.</div>';
         return;
     }
 
     const frag = document.createDocumentFragment();
 
-    for (const s of sources) {
-        const a = document.createElement('a');
-        a.className = 'source-pill';
-        a.textContent = s.name || 'Source';
-        a.href = safeUrl(s.url || s.origin);
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        frag.appendChild(a);
-    }
+    sources.forEach(s => {
+        const span = document.createElement('span');
+        span.className = 'source-pill';
+        span.textContent = s.name || s.source;
+        span.style.cursor = 'pointer'; // On montre que c'est cliquable
+
+        // Quand on clique sur une bulle de source
+        span.addEventListener('click', () => {
+            // 1. On met à jour le menu déroulant (pour que tout soit synchro)
+            const select = document.getElementById('source-select');
+            if (select) {
+                select.value = s.name || s.source;
+                // 2. On déclenche manuellement l'événement de changement
+                select.dispatchEvent(new Event('change'));
+            }
+
+            // 3. Effet visuel : on met la bulle en évidence
+            document.querySelectorAll('.source-pill').forEach(p => p.classList.remove('active-pill'));
+            span.classList.add('active-pill');
+        });
+
+        frag.appendChild(span);
+    });
 
     sourcesListEl.appendChild(frag);
 }
+/* ---------------- SOURCE SELECT ---------------- */
 
 function populateSourceSelect(selectEl, sources, selectedValue = '') {
+
     if (!selectEl) return;
 
     selectEl.innerHTML = '';
+
     const base = document.createElement('option');
     base.value = '';
     base.textContent = 'Toutes les sources';
+
     selectEl.appendChild(base);
 
-    const names = [...new Set((sources || []).map(s => s.name).filter(Boolean))]
-        .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+    const names = [...new Set(
+        (sources || [])
+            .map(s => s.name || s.source)
+            .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
 
-    if (!names.length) {
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = 'Aucune source trouvée';
-        selectEl.appendChild(opt);
-        return;
-    }
 
     for (const n of names) {
+
         const opt = document.createElement('option');
+
         opt.value = n;
         opt.textContent = n;
+
         selectEl.appendChild(opt);
     }
 
-    if (selectedValue && names.includes(selectedValue)) {
-        selectEl.value = selectedValue;
-    } else {
-        selectEl.value = '';
-    }
+    selectEl.value = names.includes(selectedValue) ? selectedValue : '';
 }
 
+
+/* ---------------- ARTICLES ---------------- */
+
 function renderArticles(containerEl, articles, noResultsEl) {
+
     if (!containerEl) return;
+
     containerEl.textContent = '';
 
     if (!Array.isArray(articles) || articles.length === 0) {
+
         showMessage(noResultsEl, true, 'Aucun résultat.');
+
         return;
     }
 
     showMessage(noResultsEl, false);
 
+    const favorites =
+        JSON.parse(localStorage.getItem('flowlyFavorites')) || [];
+
     const frag = document.createDocumentFragment();
 
+
     for (const a of articles) {
+
         const card = document.createElement('div');
         card.className = 'article-card';
 
+
+        /* IMAGE */
+
         if (a.urlToImage) {
+
             const img = document.createElement('img');
+
             img.className = 'article-img';
             img.loading = 'lazy';
-            img.referrerPolicy = 'no-referrer';
-            img.alt = 'Illustration';
             img.src = a.urlToImage;
+
             img.onerror = () => img.remove();
+
             card.appendChild(img);
         }
+
+
+        /* META */
 
         const meta = document.createElement('div');
         meta.className = 'article-meta';
 
-        const sourceLink = document.createElement('a');
-        sourceLink.className = 'source-tag';
-        sourceLink.href = safeUrl(a.sourceUrl || a.lien);
-        sourceLink.target = '_blank';
-        sourceLink.rel = 'noopener noreferrer';
-        sourceLink.textContent = a.source || 'Source';
-        meta.appendChild(sourceLink);
 
-        const cat = document.createElement('span');
-        cat.className = 'category-tag';
-        cat.textContent = a.category || 'Actualités';
-        meta.appendChild(cat);
+        const sourceTag = document.createElement('span');
+
+        sourceTag.className = 'source-tag';
+        sourceTag.textContent = a.source || 'Source';
+
+        meta.appendChild(sourceTag);
+
+
+        /* FAVORI */
+
+        const isFav = favorites.some(f => f.lien === a.lien);
+
+        const favBtn = document.createElement('button');
+
+        favBtn.className = `fav-indicator ${isFav ? 'active' : ''}`;
+        favBtn.innerHTML = isFav ? '★' : '☆';
+
+        favBtn.title = 'Sauvegarder';
+
+
+        favBtn.addEventListener('click', (e) => {
+
+            e.preventDefault();
+            e.stopPropagation(); // empêche l'ouverture de l'article
+
+            if (window.toggleFavorite) {
+                window.toggleFavorite(a.lien);
+            }
+        });
+
+        meta.appendChild(favBtn);
 
         card.appendChild(meta);
 
+
+        /* TITRE */
+
         const h3 = document.createElement('h3');
+
         const link = document.createElement('a');
+
         link.className = 'article-link';
         link.href = safeUrl(a.lien);
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
+
         link.textContent = a.titre || 'Sans titre';
+
         h3.appendChild(link);
+
         card.appendChild(h3);
 
+
+        /* DESCRIPTION */
+
         if (a.description) {
+
             const p = document.createElement('p');
+
             p.className = 'article-desc';
             p.textContent = a.description;
+
             card.appendChild(p);
         }
 
@@ -152,19 +221,40 @@ function renderArticles(containerEl, articles, noResultsEl) {
     containerEl.appendChild(frag);
 }
 
+
+/* ---------------- ACTIVE BUTTONS ---------------- */
+
 function setActiveButtons(selector, activeValue, attrName) {
+
     document.querySelectorAll(selector).forEach(btn => {
-        const v = btn.getAttribute(attrName) || '';
-        btn.classList.toggle('active', v === activeValue);
+
+        const v = btn.getAttribute(attrName) || btn.textContent.trim();
+
+        const isActualites =
+            v === 'Actualités' && activeValue === '';
+
+        btn.classList.toggle(
+            'active',
+            v === activeValue || isActualites
+        );
     });
 }
 
-// Expose en global (simple, scolaire)
+
+/* ---------------- EXPORT GLOBAL ---------------- */
+
 window.FlowlyUI = {
+
     setLoading,
     showMessage,
     renderSourcesList,
     populateSourceSelect,
     renderArticles,
-    setActiveButtons,
+    setActiveButtons
+
 };
+function decodeHTML(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}
