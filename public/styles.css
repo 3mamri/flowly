@@ -424,3 +424,47 @@ main {
 .sources-panel, .sources-list, .source-pill {
     pointer-events: auto;
 }
+.article-meta {
+    display: flex;
+    justify-content: space-between; /* Pour séparer la source de l'étoile */
+    align-items: center;
+    width: 100%;
+}
+
+.fav-indicator {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.6rem;
+    color: var(--txt-muted); /* Utilise ta variable pour s'adapter au thème */
+    transition: color 0.3s, transform 0.2s, opacity 0.2s;
+    outline: none;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.6;
+}
+
+/* État survolé */
+.fav-indicator:hover {
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+/* État Actif (Sauvegardé) */
+.fav-indicator.active {
+    color: var(--accent) !important; /* Utilise ton Jaune/Or défini dans :root */
+    opacity: 1;
+    filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.4));
+}
+
+/* Animation lors du clic sur le bouton FAVORIS de la nav */
+#btn-show-fav.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+}
+.source-pill.active-pill {
+    background-color: var(--accent) !important;
+    color: var(--bg) !important;
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
