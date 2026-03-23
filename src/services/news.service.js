@@ -1,166 +1,126 @@
-const Parser = require('rss-parser');
+// src/services/news.service.js
 
+const Parser = require('rss-parser');
 const { fetchWithTimeout } = require('../utils/fetchWithTimeout');
 const { normalizeArticle, originFromUrl } = require('../utils/normalize');
 const { dedupeByUrl } = require('../utils/dedupe');
 
 const rssParser = new Parser();
-
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
-const GNEWS_API_KEY = process.env.GNEWS_API_KEY;
 
-// RSS feeds (complète les APIs)
+// RSS feeds de secours
 const RSS_FEEDS = {
     fr: [
         { name: 'Le Monde', url: 'https://www.lemonde.fr/rss/une.xml' },
-        { name: 'France 24', url: 'https://www.france24.com/fr/rss' },
-        { name: "L'Équipe", url: 'https://www.lequipe.fr/rss/actu_rss.xml' },
+        { name: 'France 24', url: 'https://www.france24.com/fr/rss' }
     ],
     en: [
-        { name: 'BBC', url: 'https://feeds.bbci.co.uk/news/rss.xml' },
-        { name: 'CNN', url: 'https://rss.cnn.com/rss/edition.rss' },
+        { name: 'BBC News', url: 'https://feeds.bbci.co.uk/news/rss.xml' },
+        { name: 'CNN', url: 'https://rss.cnn.com/rss/edition.rss' }
     ],
 };
 
-// Cache mémoire simple
-const cache = new Map();
-const TTL_MS = 60 * 1000;
+// Mapping Pays pour NewsAPI
+const langToCountry = { fr: 'fr', en: 'us' };
 
-function getCache(key) {
-    const e = cache.get(key);
-    if (!e) return null;
-    if (Date.now() - e.ts > TTL_MS) return null;
-    return e.data;
-}
-function setCache(key, data) {
-    cache.set(key, { ts: Date.now(), data });
-}
-
-// NewsAPI top-headlines -> country (plus fiable que language seul)
-const langToCountry = { fr: 'fr', en: 'gb' };
-
-async function fetchNewsAPI({ lang, pageSize }) {
+/**
+ * Récupère les news de NewsAPI avec gestion des catégories
+ */
+async function fetchNewsAPI({ lang, category, pageSize }) {
     if (!NEWS_API_KEY) return [];
 
     const country = langToCountry[lang] || 'fr';
-    const url = `https://newsapi.org/v2/top-headlines?country=${country}&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
+
+    // Construction de l'URL avec les bons paramètres
+    // NewsAPI attend : business, entertainment, general, health, science, sports, technology
+    let url = `https://newsapi.org/v2/top-headlines?country=${country}&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
+
+    if (category && category !== 'general' && category !== '') {
+        url += `&category=${category}`;
+    }
 
     try {
         const res = await fetchWithTimeout(url, 9000);
         const data = await res.json();
-        const items = Array.isArray(data.articles) ? data.articles : [];
 
-        return items.map(a =>
-            normalizeArticle({
-                titre: a.title,
-                description: a.description || a.content || '',
-                lien: a.url,
-                publishedAt: a.publishedAt,
-                urlToImage: a.urlToImage || null,
-                source: a?.source?.name || 'NewsAPI',
-                sourceUrl: originFromUrl(a.url),
-            })
-        );
+        if (data.status === 'error') {
+            console.error('[NewsAPI Error]', data.message);
+            return [];
+        }
+
+        const items = Array.isArray(data.articles) ? data.articles : [];
+        return items.map(a => normalizeArticle({
+            titre: a.title,
+            description: a.description || a.content || '',
+            lien: a.url,
+            publishedAt: a.publishedAt,
+            urlToImage: a.urlToImage || null,
+            source: a?.source?.name || 'NewsAPI',
+            sourceUrl: originFromUrl(a.url),
+        }));
     } catch (e) {
-        console.error('NewsAPI error:', e.message || e);
+        console.error('[NewsAPI] Erreur de récupération:', e.message);
         return [];
     }
 }
 
-async function fetchGNews({ lang, max }) {
-    if (!GNEWS_API_KEY) return [];
-
-    const url = `https://gnews.io/api/v4/top-headlines?lang=${lang}&max=${max}&token=${GNEWS_API_KEY}`;
-
-    try {
-        const res = await fetchWithTimeout(url, 9000);
-        const data = await res.json();
-        const items = Array.isArray(data.articles) ? data.articles : [];
-
-        return items.map(a =>
-            normalizeArticle({
-                titre: a.title,
-                description: a.description || '',
-                lien: a.url,
-                publishedAt: a.publishedAt,
-                urlToImage: a.image || null,
-                source: a?.source?.name ? `GNews: ${a.source.name}` : 'GNews',
-                sourceUrl: a?.source?.url || originFromUrl(a.url),
-            })
-        );
-    } catch (e) {
-        console.error('GNews error:', e.message || e);
-        return [];
-    }
-}
-
+/**
+ * Récupère les news via les flux RSS
+ */
 async function fetchRSSFeed(feed) {
     try {
         const parsed = await rssParser.parseURL(feed.url);
         const items = Array.isArray(parsed.items) ? parsed.items : [];
 
-        return items.slice(0, 30).map(item => {
-            const img =
-                item.enclosure?.url ||
-                item['media:content']?.url ||
-                item['media:group']?.['media:content']?.url ||
-                null;
-
-            return normalizeArticle({
-                titre: item.title,
-                description: item.contentSnippet || item.content || '',
-                lien: item.link,
-                publishedAt: item.pubDate || new Date().toISOString(),
-                urlToImage: img,
-                source: parsed.title || feed.name,
-                sourceUrl: parsed.link || originFromUrl(feed.url),
-            });
-        });
+        return items.slice(0, 20).map(item => normalizeArticle({
+            titre: item.title,
+            description: item.contentSnippet || item.content || '',
+            lien: item.link,
+            publishedAt: item.pubDate || new Date().toISOString(),
+            urlToImage: item.enclosure?.url || null,
+            source: feed.name,
+            sourceUrl: originFromUrl(feed.url),
+        }));
     } catch (e) {
-        console.error('RSS error:', feed.url, e.message || e);
+        console.error(`[RSS] Erreur sur ${feed.name}:`, e.message);
         return [];
     }
 }
 
-function paginate(list, page, pageSize) {
-    const start = (page - 1) * pageSize;
-    return list.slice(start, start + pageSize);
-}
-
+/**
+ * Fonction principale appelée par le contrôleur
+ */
 async function getNews({ lang, category, page, pageSize }) {
-    const safeLang = lang === 'en' ? 'en' : 'fr';
-    const safeCategory = typeof category === 'string' ? category.trim() : '';
-    const safePage = Math.min(Math.max(parseInt(page, 10) || 1, 1), 50);
-    const safePageSize = Math.min(Math.max(parseInt(pageSize, 10) || 60, 10), 100);
+    try {
+        const safeLang = lang === 'en' ? 'en' : 'fr';
+        const safePage = parseInt(page) || 1;
+        const safePageSize = parseInt(pageSize) || 60;
 
-    const cacheKey = `news:${safeLang}:${safeCategory || 'all'}:${safePage}:${safePageSize}`;
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
+        // On lance NewsAPI et les RSS en parallèle
+        // Note: Les RSS ne gèrent pas bien les catégories, donc on ne les charge
+        // principalement que pour la catégorie "general" (Actualités)
+        const feeds = (category === 'general' || !category) ? (RSS_FEEDS[safeLang] || []) : [];
 
-    const feeds = RSS_FEEDS[safeLang] || RSS_FEEDS.fr;
+        const results = await Promise.all([
+            fetchNewsAPI({ lang: safeLang, category, pageSize: 100 }),
+            ...feeds.map(fetchRSSFeed)
+        ]);
 
-    const results = await Promise.all([
-        fetchNewsAPI({ lang: safeLang, pageSize: 80 }),
-        fetchGNews({ lang: safeLang, max: 80 }),
-        ...feeds.map(fetchRSSFeed),
-    ]);
+        // Fusion et nettoyage
+        let merged = results.flat().filter(Boolean);
+        merged = dedupeByUrl(merged);
 
-    let merged = results.flat().filter(Boolean);
+        // Tri par date (plus récent en premier)
+        merged.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
 
-    // dedupe
-    merged = dedupeByUrl(merged);
+        // Pagination finale
+        const start = (safePage - 1) * safePageSize;
+        return merged.slice(start, start + safePageSize);
 
-    // filtre catégorie serveur
-    if (safeCategory) merged = merged.filter(a => a.category === safeCategory);
-
-    // tri date desc
-    merged.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-
-    // pagination finale
-    const paged = paginate(merged, safePage, safePageSize);
-
-    setCache(cacheKey, paged);
-    return paged;
+    } catch (err) {
+        console.error('[Service News] Erreur globale:', err);
+        return [];
+    }
 }
 
 module.exports = { getNews };

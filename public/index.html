@@ -4,7 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flowly - Premium News</title>
+    <link rel="icon" type="image/png" href="icone.png">
     <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <title>Flowly | Ton flux d'actu</title>
+
+        <link rel="icon" type="image/png" href="icone.png">
 </head>
 
 <body id="body">
@@ -31,7 +36,6 @@
         <button id="dark-mode-toggle" type="button" aria-label="Changer le thème">THÈME</button>
     </div>
 </header>
-<!-- NAV CATEGORIES -->
 <nav class="compact-nav" aria-label="Catégories">
     <button type="button" class="nav-cat active" data-cat="Actualités">ACTUALITÉS</button>
     <button type="button" class="nav-cat" data-cat="Politique">POLITIQUE</button>
@@ -40,30 +44,26 @@
     <button type="button" class="nav-cat" data-cat="Culture">CULTURE</button>
     <button id="btn-show-fav" type="button">⭐ FAVORIS</button>
 </nav>
-
 <main>
-    <!-- SEARCH / FILTERS -->
-    <section class="search-bar" aria-label="Filtres">
-        <select id="source-select" aria-label="Choisir une source">
+    <section class="search-bar">
+        <select id="source-select">
             <option value="">Toutes les sources</option>
         </select>
 
-        <input type="text" id="keyword-input" placeholder="Rechercher..." autocomplete="off" />
+        <input type="text" id="keyword-input" placeholder="Rechercher..." />
+
         <button id="filter-button" type="button">OK</button>
     </section>
 
-    <!-- SOURCES LIST -->
-    <div class="sources-panel" aria-label="Liste des sources">
+    <div class="sources-panel">
         <div class="sources-title">Sources</div>
         <div id="sources-list" class="sources-list"></div>
     </div>
 
-    <!-- STATES -->
-    <div id="loading-indicator" class="hidden" aria-live="polite">Chargement...</div>
-    <div id="no-results" class="hidden" aria-live="polite">Aucun résultat.</div>
+    <div id="loading-indicator" class="hidden">Chargement...</div>
+    <div id="no-results" class="hidden">Aucun résultat.</div>
 
-    <!-- ARTICLES -->
-    <div id="articles-container" aria-label="Articles"></div>
+    <div id="articles-container"></div>
 </main>
 
 <!-- SCRIPTS (ordre important) -->

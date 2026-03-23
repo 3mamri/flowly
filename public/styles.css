@@ -122,18 +122,15 @@ html, body {
 
 #dark-mode-toggle:hover { transform: scale(1.05); opacity: 0.95; }
 
-/* ----------------- NAV ----------------- */
-.compact-nav {
-    border-top: 1px solid var(--brd-strong);
-    border-bottom: 1px solid var(--brd-strong);
-    padding: 12px 0;
-    text-align: center;
-    margin-top: 10px;
-    background-color: var(--bg);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
+/.compact-nav {
+     position: relative; /* important pour le z-index */
+     z-index: 10;        /* assure que la nav soit au-dessus */
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     padding: 8px 0;
+     background: var(--bg);
+ }
 
 .compact-nav .nav-cat {
     background: transparent;
@@ -147,6 +144,7 @@ html, body {
     color: var(--txt);
     padding: 6px 2px;
     transition: color 0.2s ease, border-color 0.2s ease;
+    pointer-events: auto; /* assure que les clics passent */
 }
 
 .compact-nav .nav-cat:hover { color: var(--accent); }
@@ -155,7 +153,6 @@ html, body {
     color: var(--accent);
     border-bottom: 2px solid var(--accent);
 }
-
 /* ----------------- SEARCH BAR ----------------- */
 .search-bar {
     max-width: 1000px;
@@ -467,4 +464,7 @@ main {
     color: var(--bg) !important;
     border-color: var(--accent);
     transform: scale(1.05);
+}
+.sources-panel, #articles-container {
+    pointer-events: auto; /* s'assurer que seuls ces éléments réagissent quand on clique dessus */
 }

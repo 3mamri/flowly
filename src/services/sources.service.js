@@ -4,72 +4,60 @@ const { dedupeSources } = require('../utils/dedupe');
 
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
-// RSS fixes (complète le catalogue)
+// Liste des IDs "Elite" officiels de NewsAPI (Garantis sans bugs)
+const ELITE_IDS = [
+    // Français
+    'le-monde', 'liberation', 'les-echos', 'le-figaro', 'google-news-fr',
+    // Anglais (USA/UK)
+    'bbc-news', 'cnn', 'reuters', 'the-verge', 'techcrunch', 'abc-news', 'google-news'
+];
+
 const RSS_SOURCES = {
     fr: [
         { name: 'Le Monde', url: 'https://www.lemonde.fr/rss/une.xml', provider: 'RSS' },
-        { name: 'France 24', url: 'https://www.france24.com/fr/rss', provider: 'RSS' },
-        { name: "L'Équipe", url: 'https://www.lequipe.fr/rss/actu_rss.xml', provider: 'RSS' },
+        { name: 'France 24', url: 'https://www.france24.com/fr/rss', provider: 'RSS' }
     ],
     en: [
-        { name: 'BBC', url: 'https://feeds.bbci.co.uk/news/rss.xml', provider: 'RSS' },
-        { name: 'CNN', url: 'https://rss.cnn.com/rss/edition.rss', provider: 'RSS' },
-    ],
+        { name: 'BBC News', url: 'https://feeds.bbci.co.uk/news/rss.xml', provider: 'RSS' },
+        { name: 'The Guardian', url: 'https://www.theguardian.com/world/rss', provider: 'RSS' }
+    ]
 };
-
-// Cache mémoire simple
-const cache = new Map();
-const TTL_MS = 60 * 1000;
-
-function getCache(key) {
-    const e = cache.get(key);
-    if (!e) return null;
-    if (Date.now() - e.ts > TTL_MS) return null;
-    return e.data;
-}
-function setCache(key, data) {
-    cache.set(key, { ts: Date.now(), data });
-}
 
 async function fetchNewsApiSources(lang) {
     if (!NEWS_API_KEY) return [];
-
     const url = `https://newsapi.org/v2/top-headlines/sources?language=${lang}&apiKey=${NEWS_API_KEY}`;
 
     try {
-        const res = await fetchWithTimeout(url, 9000);
+        const res = await fetchWithTimeout(url, 5000);
         const data = await res.json();
+        let sources = data.sources || [];
 
-        const sources = Array.isArray(data.sources) ? data.sources : [];
+        // ON FILTRE : On ne garde que les IDs de notre liste ELITE
+        sources = sources.filter(s => ELITE_IDS.includes(s.id));
 
-        return sources.map(s =>
-            normalizeSource({
-                name: s.name,
-                url: s.url,
-                provider: 'NewsAPI',
-            })
-        );
+        return sources.map(s => normalizeSource({
+            name: s.name,
+            url: s.url,
+            provider: 'NewsAPI'
+        }));
     } catch (e) {
-        console.error('NewsAPI sources error:', e.message || e);
+        console.error(`[NewsAPI] Erreur sources ${lang}:`, e.message);
         return [];
     }
 }
 
 async function getSources({ lang }) {
-    const safeLang = lang === 'en' ? 'en' : 'fr';
+    const safeLang = (lang === 'en') ? 'en' : 'fr';
 
-    const cacheKey = `sources:${safeLang}`;
-    const cached = getCache(cacheKey);
-    if (cached) return cached;
-
+    // On lance les deux récupérations
     const fromNewsApi = await fetchNewsApiSources(safeLang);
-    const fromRss = (RSS_SOURCES[safeLang] || RSS_SOURCES.fr).map(normalizeSource);
+    const fromRss = (RSS_SOURCES[safeLang] || []).map(normalizeSource);
 
+    // Fusion et dédoublonnage
     const merged = dedupeSources([...fromNewsApi, ...fromRss]).sort((a, b) =>
-        a.name.localeCompare(b.name, safeLang === 'fr' ? 'fr' : 'en', { sensitivity: 'base' })
+        a.name.localeCompare(b.name, safeLang)
     );
 
-    setCache(cacheKey, merged);
     return merged;
 }
 

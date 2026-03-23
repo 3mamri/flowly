@@ -129,21 +129,21 @@ function renderArticles(containerEl, articles, noResultsEl) {
 
 
         /* IMAGE */
-
         if (a.urlToImage) {
-
             const img = document.createElement('img');
-
             img.className = 'article-img';
             img.loading = 'lazy';
             img.src = a.urlToImage;
 
-            img.onerror = () => img.remove();
+            // FIX SÉCURISÉ : On ne supprime que si le parent existe encore
+            img.onerror = () => {
+                if (img && img.parentNode) {
+                    img.parentNode.removeChild(img);
+                }
+            };
 
             card.appendChild(img);
         }
-
-
         /* META */
 
         const meta = document.createElement('div');
