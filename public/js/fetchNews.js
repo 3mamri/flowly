@@ -268,10 +268,13 @@ function applyFiltersAndRender() {
 /* ---------------- ORCHESTRATION ---------------- */
 
 function refetchAll() {
-
     lastFetchId++;
-
     const id = lastFetchId;
+
+    // --- AJOUTE CETTE LIGNE ICI ---
+    // On met à jour la langue du "state" avec ce qui est en mémoire
+    state.lang = localStorage.getItem('flowlyLang') || 'fr';
+    // ------------------------------
 
     setActiveUI();
 
@@ -284,20 +287,6 @@ function refetchAll() {
     loadSources(id);
     loadNews(id);
 }
-
-
-function refetchNewsOnly() {
-
-    lastFetchId++;
-
-    const id = lastFetchId;
-
-    setActiveUI();
-
-    loadNews(id);
-}
-
-
 
 /* ---------------- EVENTS ---------------- */
 
@@ -357,3 +346,4 @@ document.addEventListener('DOMContentLoaded', () => {
     bindEvents();
     refetchAll();
 });
+window.refetchAll = refetchAll;
