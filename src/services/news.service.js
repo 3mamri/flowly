@@ -31,15 +31,32 @@ async function fetchNewsAPI({ lang, category, pageSize }) {
 
     const country = langToCountry[lang] || 'fr';
 
-    // Construction de l'URL avec les bons paramètres
-    // NewsAPI attend : business, entertainment, general, health, science, sports, technology
+    // 1. TRADUCTION : On convertit les catégories FR en termes NewsAPI (Anglais)
+    const apiCategoryMap = {
+        'Économie': 'business',
+        'Business': 'business',
+        'Sports': 'sports',
+        'Culture': 'entertainment',
+        'Technologie': 'technology',
+        'Politique': 'politics',
+        'Actualités': 'general'
+    };
+
+    // On récupère la valeur traduite, sinon on garde la catégorie brute en minuscule
+    let apiCategory = apiCategoryMap[category] || (category ? category.toLowerCase() : 'general');
+
+    // NewsAPI ne supporte pas 'politics' dans country headlines, on bascule sur 'general'
+    if (apiCategory === 'politics') apiCategory = 'general';
+
+    // 2. Construction de l'URL
     let url = `https://newsapi.org/v2/top-headlines?country=${country}&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
 
-    if (category && category !== 'general' && category !== '') {
-        url += `&category=${category}`;
+    if (apiCategory && apiCategory !== 'general') {
+        url += `&category=${apiCategory}`;
     }
 
     try {
+        console.log(`📡 Appel NewsAPI [${country}] - Catégorie: ${apiCategory}`);
         const res = await fetchWithTimeout(url, 9000);
         const data = await res.json();
 
@@ -49,24 +66,36 @@ async function fetchNewsAPI({ lang, category, pageSize }) {
         }
 
         const items = Array.isArray(data.articles) ? data.articles : [];
-        return items.map(a => normalizeArticle({
-            titre: a.title,
-            description: a.description || a.content || '',
-            lien: a.url,
-            publishedAt: a.publishedAt,
-            urlToImage: a.urlToImage || null,
-            source: a?.source?.name || 'NewsAPI',
-            sourceUrl: originFromUrl(a.url),
-        }));
+
+        // 3. Si les Top-Headlines sont vides pour cette catégorie en France
+        // On tente une recherche large (Everything) pour ne pas laisser l'utilisateur sur une page blanche
+        if (items.length === 0 && apiCategory !== 'general' && country === 'fr') {
+            console.log(`[NewsAPI] Relance large pour: ${apiCategory}`);
+            const backupUrl = `https://newsapi.org/v2/everything?q=${apiCategory}&language=fr&sortBy=publishedAt&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
+            const backupRes = await fetchWithTimeout(backupUrl, 9000);
+            const backupData = await backupRes.json();
+            return (backupData.articles || []).map(a => formatArticle(a));
+        }
+
+        return items.map(a => formatArticle(a));
     } catch (e) {
-        console.error('[NewsAPI] Erreur de récupération:', e.message);
+        console.error('[NewsAPI] Erreur:', e.message);
         return [];
     }
 }
 
-/**
- * Récupère les news via les flux RSS
- */
+// Helper pour ne pas répéter le mapping de l'article
+function formatArticle(a) {
+    return normalizeArticle({
+        titre: a.title,
+        description: a.description || a.content || '',
+        lien: a.url,
+        publishedAt: a.publishedAt,
+        urlToImage: a.urlToImage || null,
+        source: a?.source?.name || 'NewsAPI',
+        sourceUrl: originFromUrl(a.url),
+    });
+}
 async function fetchRSSFeed(feed) {
     try {
         const parsed = await rssParser.parseURL(feed.url);
