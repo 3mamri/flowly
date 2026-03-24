@@ -22,6 +22,7 @@ let lastFetchId = 0;
 let favorites = JSON.parse(localStorage.getItem('flowlyFavorites')) || [];
 
 
+
 /* ---------------- HELPERS ---------------- */
 
 function decodeHTML(html) {
@@ -45,156 +46,30 @@ async function fetchJson(url) {
 }
 
 
-/* ---------------- SOURCES ---------------- */
 
-async function loadSources(fetchId) {
-    try {
-        const data = await fetchJson(`/api/sources?lang=${state.lang}`);
+function buildSourcesFallbackFromArticles(articles) {
+    const map = new Map();
 
-        if (fetchId !== lastFetchId) return;
+    for (const a of articles) {
 
-        allSources = Array.isArray(data.sources) ? data.sources : [];
-    } catch (e) {
-        console.error('sources error:', e);
-        if (fetchId !== lastFetchId) return;
-        allSources = [];
-    }
+        const name = a?.source;
+        if (!name) continue;
 
-    if (!UI) return;
-
-    UI.populateSourceSelect?.(sourceSelect, allSources, state.source);
-    UI.renderSourcesList?.(sourcesList, allSources);
-}
-
-
-/* ---------------- FILTRAGE ET RENDU ---------------- */
-
-function applyFiltersAndRender() {
-    console.log("🎨 Application des filtres...");
-
-    if (state.category === 'FAVORIS') {
-        UI?.renderArticles?.(articlesContainer, favorites, noResults);
-        return;
-    }
-
-    state.keyword = (keywordInput?.value || '').toLowerCase().trim();
-    state.source = sourceSelect?.value || '';
-
-    let filtered = [...allArticles];
-
-    if (state.source) {
-        filtered = filtered.filter(a => a.source === state.source);
-    }
-
-    if (state.keyword) {
-        filtered = filtered.filter(a =>
-            (a.titre || '').toLowerCase().includes(state.keyword) ||
-            (a.description || '').toLowerCase().includes(state.keyword)
-        );
-    }
-
-    if (UI && UI.renderArticles) {
-        UI.renderArticles(articlesContainer, filtered, noResults);
-    } else {
-        console.error("❌ FlowlyUI.renderArticles est introuvable !");
-    }
-}
-
-
-/* ---------------- NEWS ---------------- */
-
-async function loadNews(fetchId) {
-    if (state.category === 'FAVORIS') return;
-
-    UI?.setLoading?.(loadingIndicator, true);
-    UI?.showMessage?.(noResults, false);
-
-    const categoryMapping = {
-        'Actualités': 'general',
-        'Politique': 'general',
-        'Économie': 'business',
-        'Sports': 'sports',
-        'Culture': 'entertainment',
-        'Technologie': 'technology'
-    };
-
-    const sourceMapping = {
-        'BBC News': 'bbc-news',
-        'CNN': 'cnn',
-        'The Verge': 'the-verge',
-        'TechCrunch': 'techcrunch',
-        'Reuters': 'reuters',
-        'Bloomberg': 'bloomberg'
-    };
-
-    let apiCategory = categoryMapping[state.category] || 'general';
-
-    const params = new URLSearchParams({
-        page: state.page,
-        pageSize: state.pageSize,
-        lang: state.lang // Ajout de la langue pour le serveur
-    });
-
-    if (state.source && sourceMapping[state.source]) {
-        params.set('source', sourceMapping[state.source]);
-    } else {
-        params.set('category', apiCategory);
-        // params.set('country', 'us'); // Optionnel selon ta config serveur
-    }
-
-    try {
-        const data = await fetchJson(`/api/news?${params.toString()}`);
-
-        if (fetchId !== lastFetchId) return;
-
-        allArticles = Array.isArray(data.articles) ? data.articles : (data || []);
-
-        if (!allArticles.length) {
-            UI?.renderArticles?.(articlesContainer, [], noResults);
-            UI?.showMessage?.(noResults, true, "Aucun article trouvé.");
-        } else {
-            applyFiltersAndRender();
-        }
-    } catch (e) {
-        console.error('news error:', e);
-        if (fetchId !== lastFetchId) return;
-        allArticles = [];
-        UI?.renderArticles?.(articlesContainer, [], noResults);
-    } finally {
-        if (fetchId === lastFetchId) {
-            UI?.setLoading?.(loadingIndicator, false);
+        if (!map.has(name)) {
+            map.set(name, {
+                name,
+                url: a.sourceUrl || ''
+            });
         }
     }
+
+    return [...map.values()];
 }
 
 
-function refetchNewsOnly() {
-    lastFetchId++;
-    const id = lastFetchId;
-
-    setActiveUI();
-    loadNews(id);
-}
-
-function refetchAll() {
-    lastFetchId++;
-    const id = lastFetchId;
-
-    state.lang = localStorage.getItem('flowlyLang') || 'fr';
-
-    setActiveUI();
-
-    state.source = '';
-    state.keyword = '';
-
-    if (sourceSelect) sourceSelect.value = '';
-    if (keywordInput) keywordInput.value = '';
-
-    loadSources(id);
-    loadNews(id);
-}
 
 function setActiveUI() {
+
     const activeCat = state.category || 'Actualités';
 
     UI?.setActiveButtons?.('.lang-btn', state.lang, 'data-lang');
@@ -208,40 +83,267 @@ function setActiveUI() {
 }
 
 
+
+/* ---------------- FAVORITES ---------------- */
+
+window.toggleFavorite = function(articleLien) {
+
+    const index = favorites.findIndex(a => a.lien === articleLien);
+
+    if (index > -1) {
+        favorites.splice(index, 1);
+    }
+    else {
+
+        const article = allArticles.find(a => a.lien === articleLien);
+
+        if (article) favorites.push(article);
+    }
+
+    localStorage.setItem('flowlyFavorites', JSON.stringify(favorites));
+
+    if (state.category === 'FAVORIS') {
+        window.showFavorites();
+    }
+    else {
+        applyFiltersAndRender();
+    }
+};
+
+
+window.showFavorites = function() {
+
+    state.category = 'FAVORIS';
+
+    setActiveUI();
+
+    UI?.setLoading?.(loadingIndicator, false);
+
+    UI?.renderArticles?.(articlesContainer, favorites, noResults);
+};
+
+
+
+/* ---------------- SOURCES ---------------- */
+
+async function loadSources(fetchId) {
+
+    try {
+
+        const data = await fetchJson(`/api/sources?lang=${state.lang}`);
+
+        if (fetchId !== lastFetchId) return;
+
+        allSources = Array.isArray(data.sources) ? data.sources : [];
+    }
+
+    catch (e) {
+
+        console.error('sources error:', e);
+
+        if (fetchId !== lastFetchId) return;
+
+        allSources = [];
+    }
+
+
+    if (!UI) return;
+
+    UI.populateSourceSelect?.(sourceSelect, allSources, state.source);
+    UI.renderSourcesList?.(sourcesList, allSources);
+}
+
+
+
+/* ---------------- ARTICLES ---------------- */
+
+async function loadNews(fetchId) {
+
+    if (state.category === 'FAVORIS') return;
+
+    UI?.setLoading?.(loadingIndicator, true);
+    UI?.showMessage?.(noResults, false);
+
+
+    const params = new URLSearchParams({
+
+        lang: state.lang,
+        page: state.page,
+        pageSize: state.pageSize
+
+    });
+
+
+    if (state.category) {
+        params.set('category', state.category);
+    }
+
+
+    try {
+
+        const data = await fetchJson(`/api/news?${params.toString()}`);
+
+        if (fetchId !== lastFetchId) return;
+
+        allArticles = Array.isArray(data.articles) ? data.articles : [];
+
+
+        if (!allArticles.length) {
+
+            UI?.renderArticles?.(articlesContainer, [], noResults);
+            return;
+        }
+
+
+        if ((!allSources || allSources.length === 0) && allArticles.length > 0) {
+
+            allSources = buildSourcesFallbackFromArticles(allArticles);
+
+            UI?.populateSourceSelect?.(sourceSelect, allSources, state.source);
+            UI?.renderSourcesList?.(sourcesList, allSources);
+        }
+
+
+        applyFiltersAndRender();
+    }
+
+    catch (e) {
+
+        console.error('news error:', e);
+
+        if (fetchId !== lastFetchId) return;
+
+        allArticles = [];
+
+        UI?.renderArticles?.(articlesContainer, [], noResults);
+    }
+
+    finally {
+
+        if (fetchId === lastFetchId) {
+
+            UI?.setLoading?.(loadingIndicator, false);
+        }
+    }
+}
+
+
+
+function applyFiltersAndRender() {
+
+    if (state.category === 'FAVORIS') {
+
+        UI?.renderArticles?.(articlesContainer, favorites, noResults);
+        return;
+    }
+
+
+    state.keyword = normalizeText(keywordInput?.value);
+    state.source = sourceSelect?.value || '';
+
+
+    let filtered = [...allArticles];
+
+
+    if (state.source) {
+        filtered = filtered.filter(a => a.source === state.source);
+    }
+
+
+    if (state.keyword) {
+
+        filtered = filtered.filter(a =>
+
+            normalizeText(a.titre).includes(state.keyword) ||
+            normalizeText(a.description).includes(state.keyword)
+        );
+    }
+
+
+    UI?.renderArticles?.(articlesContainer, filtered, noResults);
+}
+
+
+
+/* ---------------- ORCHESTRATION ---------------- */
+
+function refetchAll() {
+    lastFetchId++;
+    const id = lastFetchId;
+
+    // --- AJOUTE CETTE LIGNE ICI ---
+    // On met à jour la langue du "state" avec ce qui est en mémoire
+    state.lang = localStorage.getItem('flowlyLang') || 'fr';
+    // ------------------------------
+
+    setActiveUI();
+
+    state.source = '';
+    state.keyword = '';
+
+    if (sourceSelect) sourceSelect.value = '';
+    if (keywordInput) keywordInput.value = '';
+
+    loadSources(id);
+    loadNews(id);
+}
+
 /* ---------------- EVENTS ---------------- */
 
 function bindEvents() {
+
+    const targetBtn = document.getElementById('filter-button');
+    const targetSelect = document.getElementById('source-select');
+    const targetInput = document.getElementById('keyword-input');
+
+
     document.querySelectorAll('.nav-cat').forEach(btn => {
+
         btn.addEventListener('click', () => {
-            const cat = btn.getAttribute('data-cat');
-            state.category = (cat === 'Actualités') ? '' : cat;
-            state.page = 1;
+
+            const label = (btn.getAttribute('data-cat') || 'Actualités').trim();
+
+            state.category = (label === 'Actualités') ? '' : label;
+
             refetchNewsOnly();
         });
     });
 
-    document.getElementById('filter-button')?.addEventListener('click', () => {
-        applyFiltersAndRender();
-    });
 
-    document.getElementById('source-select')?.addEventListener('change', () => {
-        applyFiltersAndRender();
-    });
+    if (targetBtn) {
+        targetBtn.addEventListener('click', applyFiltersAndRender);
+    }
 
-    document.getElementById('keyword-input')?.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') applyFiltersAndRender();
-    });
+
+    if (targetSelect) {
+        targetSelect.addEventListener('change', applyFiltersAndRender);
+    }
+
+
+    if (targetInput) {
+
+        targetInput.addEventListener('keydown', (e) => {
+
+            if (e.key === 'Enter') {
+                applyFiltersAndRender();
+            }
+        });
+    }
+
 
     document.getElementById('btn-show-fav')?.addEventListener('click', () => {
-        state.category = 'FAVORIS';
-        setActiveUI();
-        applyFiltersAndRender();
+
+        window.showFavorites();
     });
 }
 
+
+
+/* ---------------- INIT ---------------- */
+
 document.addEventListener('DOMContentLoaded', () => {
+
     bindEvents();
     refetchAll();
 });
-
 window.refetchAll = refetchAll;
