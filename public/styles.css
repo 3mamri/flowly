@@ -120,7 +120,7 @@ html, body {
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-#dark-mode-toggle:hover { transform: scale(1.05); opacity: 0.95; }
+#dark-mode-toggle:hover { transform: scale(1.05); opacity: 0.95;
 
 /.compact-nav {
      position: relative; /* important pour le z-index */
@@ -467,4 +467,4 @@ main {
 }
 .sources-panel, #articles-container {
     pointer-events: auto; /* s'assurer que seuls ces éléments réagissent quand on clique dessus */
-}
+}}
