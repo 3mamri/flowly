@@ -22,7 +22,11 @@ let lastFetchId = 0;
 let favorites = JSON.parse(localStorage.getItem('flowlyFavorites')) || [];
 
 /* ---------------- HELPERS ---------------- */
-
+function decodeHTML(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html || '';
+    return txt.value;
+}
 function decodeHTML(html) {
     const txt = document.createElement("textarea");
     txt.innerHTML = html;
@@ -40,17 +44,21 @@ async function fetchJson(url) {
 }
 
 function buildSourcesFallbackFromArticles(articles) {
-    const map = new Map();
-    for (const a of articles) {
-        const name = a?.source;
-        if (!name) continue;
-        if (!map.has(name)) {
-            map.set(name, { name, url: a.sourceUrl || '' });
-        }
-    }
-    return [...map.values()];
-}
+    const uniqueNames = new Set(); // Le Set empêche les doublons automatiquement
+    const uniqueSources = [];
 
+    articles.forEach(a => {
+        const name = a?.source?.trim();
+        if (name && !uniqueNames.has(name)) {
+            uniqueNames.add(name);
+            uniqueSources.push({
+                name: name,
+                url: a.sourceUrl || '#'
+            });
+        }
+    });
+    return uniqueSources;
+}
 function setActiveUI() {
     const activeCat = state.category || 'Actualités';
     UI?.setActiveButtons?.('.lang-btn', state.lang, 'data-lang');
@@ -124,19 +132,27 @@ async function loadNews(fetchId) {
     try {
         const data = await fetchJson(`/api/news?${params.toString()}`);
         if (fetchId !== lastFetchId) return;
+
         allArticles = Array.isArray(data.articles) ? data.articles : [];
 
         if (!allArticles.length) {
             UI?.renderArticles?.(articlesContainer, [], noResults);
             UI?.showMessage?.(noResults, true, "Aucun article trouvé.");
+            // On vide aussi les sources si rien n'est trouvé
+            UI?.renderSourcesList?.(sourcesList, []);
             return;
         }
 
-        if ((!allSources || allSources.length === 0) && allArticles.length > 0) {
-            allSources = buildSourcesFallbackFromArticles(allArticles);
-            UI?.populateSourceSelect?.(sourceSelect, allSources, state.source);
-            UI?.renderSourcesList?.(sourcesList, allSources);
-        }
+        // --- LE FIX DES DOUBLONS EST ICI ---
+        // On régénère TOUJOURS les sources à partir des nouveaux articles reçus
+        // pour éviter que les anciennes sources s'accumulent
+        allSources = buildSourcesFallbackFromArticles(allArticles);
+
+        // On met à jour l'interface avec la liste propre et unique
+        UI?.populateSourceSelect?.(sourceSelect, allSources, state.source);
+        UI?.renderSourcesList?.(sourcesList, allSources);
+        // ------------------------------------
+
         applyFiltersAndRender();
     } catch (e) {
         console.error('news error:', e);
@@ -149,7 +165,6 @@ async function loadNews(fetchId) {
         }
     }
 }
-
 function applyFiltersAndRender() {
     if (state.category === 'FAVORIS') {
         UI?.renderArticles?.(articlesContainer, favorites, noResults);
