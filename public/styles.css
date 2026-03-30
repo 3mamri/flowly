@@ -1,31 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap');
 
+/* =========================
+   VARIABLES
+========================= */
+
 :root {
-    --bg: #050505;
-    --panel: #0b0b0b;
-    --panel-2: #111111;
-    --text: #f5f3ef;
-    --muted: #b8b1a3;
-    --line: rgba(217, 173, 8, 0.65);
-    --line-strong: rgba(217, 173, 8, 0.95);
-    --accent: #d9ad08;
-    --accent-soft: rgba(217, 173, 8, 0.12);
+    --bg: #f8f5ef;
+    --panel: #ffffff;
+    --panel-2: #f3efe7;
+    --text: #111111;
+    --muted: #5e5a52;
+    --line: rgba(0, 0, 0, 0.18);
+    --line-strong: rgba(0, 0, 0, 0.55);
+    --accent: #c89b00;
     --button-light: #f4f4f4;
-    --button-dark: #141414;
+    --button-dark: #111111;
     --max-width: 1280px;
     --radius: 14px;
-    --shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
-}
-
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 body.dark {
@@ -37,13 +28,31 @@ body.dark {
     --line: rgba(217, 173, 8, 0.65);
     --line-strong: rgba(217, 173, 8, 0.95);
     --accent: #d9ad08;
-    --accent-soft: rgba(217, 173, 8, 0.12);
+    --button-light: #f4f4f4;
+    --button-dark: #141414;
 }
+
+/* =========================
+   RESET
+========================= */
 
 *,
 *::before,
 *::after {
     box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .hidden {
@@ -56,45 +65,74 @@ body.dark {
 
 .minimal-header {
     border-bottom: 1px solid var(--line);
-    padding: 18px 28px 14px;
+    padding: 12px 28px 14px;
 }
 
-.header-row {
+/* LANGUES EN HAUT */
+.top-lang-container {
     max-width: var(--max-width);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    margin: 0 auto 10px;
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
 
-.top-row {
+/* TITRE AU CENTRE */
+.brand-wrap {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    text-align: center;
+}
+
+.brand-wrap h1 {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 8vw, 6.6rem);
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.brand-wrap p {
+    margin: 10px 0 0;
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--text);
+}
+
+/* DATE À GAUCHE / THÈME À DROITE */
+.info-bar {
+    max-width: var(--max-width);
+    margin: 16px auto 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
     min-height: 42px;
 }
 
-.brand-row {
-    padding-top: 10px;
-}
-
 .h-left {
-    justify-self: start;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     font-size: 0.9rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text);
-}
-
-.h-center {
-    justify-self: center;
-    text-align: center;
+    white-space: nowrap;
 }
 
 .h-right {
-    justify-self: end;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 /* =========================
-   LANG SWITCH
+   LANGUES
 ========================= */
 
 .lang-switch {
@@ -102,9 +140,9 @@ body.dark {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    min-height: 28px;
+    width: auto;
+    max-width: 220px;
     margin: 0 auto;
-    padding: 0;
 }
 
 .lang-btn {
@@ -114,13 +152,13 @@ body.dark {
     color: var(--muted);
     cursor: pointer;
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.78rem;
     font-weight: 900;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.05em;
     line-height: 1.1;
     padding: 2px 4px;
     text-transform: uppercase;
-    transition: color 0.2s ease, opacity 0.2s ease;
+    white-space: nowrap;
 }
 
 .lang-btn:hover,
@@ -138,34 +176,7 @@ body.dark {
 }
 
 /* =========================
-   BRAND
-========================= */
-
-.brand-wrap {
-    text-align: center;
-}
-
-.brand-wrap h1 {
-    margin: 0;
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(4rem, 8vw, 6.4rem);
-    line-height: 0.92;
-    letter-spacing: -0.05em;
-    font-weight: 900;
-    color: var(--text);
-}
-
-.brand-wrap p {
-    margin: 10px 0 0;
-    font-size: 0.86rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--text);
-}
-
-/* =========================
-   THEME BUTTON
+   BOUTON THÈME
 ========================= */
 
 #dark-mode-toggle {
@@ -181,10 +192,11 @@ body.dark {
     letter-spacing: 0.06em;
     padding: 8px 18px;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 /* =========================
-   CATEGORY NAV
+   NAVIGATION
 ========================= */
 
 .compact-nav {
@@ -210,7 +222,6 @@ body.dark {
     letter-spacing: 0.01em;
     padding: 0 2px 6px;
     text-transform: uppercase;
-    transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .compact-nav button:hover,
@@ -236,7 +247,7 @@ body.dark {
 }
 
 /* =========================
-   PAGE WRAP
+   PAGE
 ========================= */
 
 .page-wrap {
@@ -246,7 +257,7 @@ body.dark {
 }
 
 /* =========================
-   SEARCH BAR
+   SEARCH
 ========================= */
 
 .search-bar,
@@ -301,7 +312,7 @@ body.dark {
 }
 
 /* =========================
-   SOURCES PANEL
+   SOURCES
 ========================= */
 
 .sources-title {
@@ -354,7 +365,7 @@ body.dark {
 }
 
 /* =========================
-   ARTICLES GRID
+   ARTICLES
 ========================= */
 
 .articles-grid {
@@ -454,15 +465,14 @@ body.dark {
         grid-template-columns: 1fr;
     }
 
-    .header-row {
+    .info-bar {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 10px;
     }
 
     .h-left,
-    .h-center,
     .h-right {
-        justify-self: center;
+        justify-content: center;
         text-align: center;
     }
 
@@ -484,12 +494,21 @@ body.dark {
     }
 
     .brand-wrap h1 {
-        font-size: clamp(3.2rem, 12vw, 4.6rem);
+        font-size: clamp(3.2rem, 12vw, 4.8rem);
     }
 
     .brand-wrap p {
         font-size: 0.76rem;
         letter-spacing: 0.12em;
+    }
+
+    .lang-switch {
+        max-width: 220px;
+        gap: 8px;
+    }
+
+    .lang-btn {
+        font-size: 0.76rem;
     }
 
     .compact-nav {

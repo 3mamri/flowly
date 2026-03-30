@@ -9,33 +9,26 @@
 </head>
 <body>
 <header class="minimal-header">
-    <div class="header-row top-row">
-        <div class="h-left">
-            <div id="current-date" aria-label="Date du jour"></div>
-        </div>
-
-        <div class="h-center">
-            <div class="lang-switch" aria-label="Choix de langue">
-                <button type="button" class="lang-btn" data-lang="fr">FRANÇAIS</button>
-                <span class="lang-separator">|</span>
-                <button type="button" class="lang-btn" data-lang="en">ENGLISH</button>
-            </div>
-        </div>
-
-        <div class="h-right">
-            <button id="dark-mode-toggle" type="button" aria-label="Changer le thème">THÈME</button>
+    <div class="top-lang-container">
+        <div class="lang-switch">
+            <button class="lang-btn active" data-lang="fr">FR</button>
+            <span class="lang-separator">|</span>
+            <button class="lang-btn" data-lang="en">EN</button>
         </div>
     </div>
 
-    <div class="header-row brand-row">
-        <div class="brand-wrap">
-            <h1>Flowly</h1>
-            <p>L'information décryptée en temps réel</p>
-        </div>
+    <div class="brand-wrap">
+        <h1>Flowly</h1>
+        <p>L'information décryptée en temps réel</p>
+    </div>
+
+    <div class="info-bar">
+        <div id="current-date" class="date-left"></div>
+        <button id="dark-mode-toggle" class="theme-right" type="button">THÈME</button>
     </div>
 </header>
 
-<nav class="compact-nav" aria-label="Catégories">
+<nav class="compact-nav">
     <button type="button" class="nav-cat active" data-cat="general">ACTUALITÉS</button>
     <button type="button" class="nav-cat" data-cat="politics">POLITIQUE</button>
     <button type="button" class="nav-cat" data-cat="economy">ÉCONOMIE</button>
@@ -50,21 +43,13 @@
         <select id="source-select">
             <option value="">Toutes les sources</option>
         </select>
-
         <input type="text" id="keyword-input" placeholder="Rechercher...">
-
         <button id="filter-button" type="button">OK</button>
-    </section>
-
-    <section class="sources-panel">
-        <div class="sources-title">Sources</div>
-        <div id="sources-list" class="sources-list"></div>
     </section>
 
     <div id="loading-indicator" class="hidden">Chargement...</div>
     <div id="no-results" class="hidden">Aucun résultat.</div>
-
-    <section id="articles-container" class="articles-grid" aria-live="polite"></section>
+    <section id="articles-container" class="articles-grid"></section>
 </main>
 
 <script src="js/ui.js"></script>
