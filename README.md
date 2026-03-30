@@ -3,6 +3,14 @@
 <h3 align="center">Agrégateur d’Actualités Intelligent • FR / EN</h3>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Statut-Projet%20Étudiant-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js" />
+  <img src="https://img.shields.io/badge/Express.js-Backend-black?style=for-the-badge&logo=express" />
+  <img src="https://img.shields.io/badge/Frontend-Vanilla%20JS-yellow?style=for-the-badge&logo=javascript" />
+  <img src="https://img.shields.io/badge/Projet-Fullstack-orange?style=for-the-badge" />
+</p>
+
+<p align="center">
 Flowly est une application web moderne permettant d’agréger, filtrer et afficher des actualités 
 provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interface claire et performante.
 </p>
@@ -40,7 +48,7 @@ provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interf
 - Filtre par source (Le Monde, BBC, etc.)
 - Recherche par mot-clé
 - Filtrage instantané côté client
-- Navigation fluide sans reload
+- Navigation fluide sans rechargement
 
 ---
 
@@ -97,7 +105,7 @@ Créer un fichier .env :
 
 NEWS_API_KEY=VOTRE_CLE_API
 
-⚠️ Optionnel : sans clé API, Flowly fonctionne avec les flux RSS
+⚠️ Optionnel : sans clé API, Flowly fonctionne uniquement avec les flux RSS
 
 4️⃣ Lancer le serveur
 npm run dev
@@ -154,5 +162,13 @@ Ce projet démontre :
 ✔️ Conception d’une API REST
 ✔️ Architecture Node.js modulaire
 ✔️ Traitement et normalisation de données
-✔️ Gestion d’état côté frontend
+✔️ Gestion d’état frontend
 ✔️ UX moderne sans framework
+
+👨‍💻 Auteur
+
+🔗 https://github.com/3mamri
+
+🏁 Licence
+
+Projet académique / portfolio
