@@ -149,21 +149,8 @@ flowly/
 ├── package.json
 └── .env
 
-👨‍💻 Auteur
+👨‍💻 **Auteur**
+🔗 [https://github.com/3mamri](https://github.com/3mamri)
 
-🔗 https://github.com/3mamri
-
-🏁 Licence
-
+🏁 **Licence**
 ### Projet académique
-
-
-
-
-
-
-
-
-
-
-
