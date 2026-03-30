@@ -5,7 +5,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Statut-Projet%20Étudiant-blue?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Node.js-green?style=for-the-badge&logo=node.js" />
-  <img src="Backend-black?style=for-the-badge&logo=express" />
+  <img src="Backend-black?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Frontend%20JS-yellow?style=for-the-badge&logo=javascript" />
 </p>
 
