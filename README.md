@@ -89,6 +89,15 @@ provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interf
 
 ---
 
+🎯 Objectif du projet
+
+Ce projet démontre :
+
+✔️ Conception d’une API REST
+✔️ Architecture Node.js
+✔️ Traitement et normalisation de données
+✔️ Gestion d’état frontend
+
 ## 🛠️ Installation
 
 ### 1️⃣ Cloner le projet
@@ -140,33 +149,21 @@ flowly/
 ├── package.json
 └── .env
 
-🔐 Sécurité & Robustesse
-Helmet (sécurité HTTP)
-Rate limiting (anti-spam)
-Timeout sur fetch
-Gestion des erreurs API
-Nettoyage des données (anti XSS)
-📈 Axes d’amélioration
-Cache backend (Redis)
-Pagination avancée
-Tri intelligent (score pertinence)
-Dashboard admin des sources
-IA de classification (NLP)
-Déploiement cloud (Docker / CI-CD)
-🎯 Objectif du projet
-
-Ce projet démontre :
-
-✔️ Conception d’une API REST
-✔️ Architecture Node.js modulaire
-✔️ Traitement et normalisation de données
-✔️ Gestion d’état frontend
-✔️ UX moderne sans framework
-
 👨‍💻 Auteur
 
 🔗 https://github.com/3mamri
 
 🏁 Licence
 
-Projet académique / portfolio
+### Projet académique
+
+
+
+
+
+
+
+
+
+
+
