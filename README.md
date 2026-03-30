@@ -1,79 +1,165 @@
-# 📰 Flowly — News Aggregator
+<h1 align="center">📰 Flowly</h1>
+
+<h3 align="center">Agrégateur d’Actualités Intelligent • FR / EN</h3>
 
 <p align="center">
-  <img src="public/icone.png" alt="Flowly Logo" width="80">
+Flowly est une application web moderne permettant d’agréger, filtrer et afficher des actualités 
+provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interface claire et performante.
 </p>
-
-<h2 align="center">L'information décryptée en temps réel</h2>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Projet-Scolaire-blue?style=for-the-badge&logo=googlescholar" alt="Projet Scolaire">
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="NodeJS">
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JS Vanilla">
+⚡ Backend : <strong>Node.js / Express</strong> <br>
+🎨 Frontend : <strong>HTML / CSS / JavaScript (Vanilla)</strong>
 </p>
 
 ---
 
-> [!IMPORTANT]
-> **CONTEXTE ACADÉMIQUE** > Ce projet démontre la mise en œuvre d'une architecture **Fullstack (Node/Express)** sans framework frontend lourd. L'accent a été mis sur la **gestion de l'asynchronisme**, la **normalisation de données hétérogènes** et l'**optimisation de l'interface utilisateur (UI/UX)**.
+## 🚀 Démo
+
+👉 http://localhost:3000
+
+*(Ajoute ici un lien si tu déploies sur Render / Vercel / Railway)*
 
 ---
 
-### ✨ Présentation
-**Flowly** est un agrégateur d’actualités moderne conçu pour centraliser l'information mondiale. En combinant la puissance de **NewsAPI** et la flexibilité des **flux RSS**, Flowly offre une expérience de lecture fluide, bilingue et entièrement personnalisable.
+## ✨ Fonctionnalités
+
+### 🌍 Multilingue
+- Français 🇫🇷
+- Anglais 🇬🇧
+- Synchronisation des catégories FR / EN
 
 ---
 
-## 🚀 Fonctionnalités Clés
+### 🗂️ Catégorisation intelligente
+- Actualités (`general`)
+- Politique (`politics`)
+- Économie (`economy`)
+- Sports (`sports`)
+- Culture (`culture`)
+- Technologie (`technology`)
 
-### 🌍 Expérience Multilingue
-* **Switch instantané** entre le Français 🇫🇷 et l'Anglais 🇬🇧.
-* Filtrage intelligent des sources selon la langue sélectionnée.
-
-### 🗂️ Organisation par Catégories
-Accès rapide aux thématiques majeures : 
-* `Actualités` • `Politique` • `Économie` • `Sports` • `Culture` • `Technologie`
-
-### 🎨 Design & Ergonomie
-* **Interface "Minimalist Newspaper"** avec typographie premium (*Playfair Display*).
-* **Dark Mode natif** pour un confort de lecture nocturne.
-* **Responsive Design** : Optimisé pour Desktop, Tablette et Mobile.
+✔️ **Filtrage strict**  
+👉 Aucun mélange entre catégories (ex: sport ≠ politique)
 
 ---
 
-## 🛠️ Stack Technique
-
-| Secteur | Technologies |
-| :--- | :--- |
-| **Frontend** | HTML5, CSS3 (Flexbox/Grid), JavaScript Vanilla |
-| **Backend** | Node.js, Express.js |
-| **Data** | NewsAPI, GNews, Flux RSS XML |
-| **Outils** | Nodemon, Axios, Dotenv |
+### 🔎 Filtrage dynamique avancé
+- Filtre par source (Le Monde, BBC, etc.)
+- Recherche par mot-clé
+- Filtrage instantané côté client
+- Navigation fluide sans reload
 
 ---
 
-Installation & Configuration
+### 🔄 Agrégation intelligente
+- Fusion **NewsAPI + RSS**
+- Déduplication des articles
+- Normalisation des données
+- Nettoyage HTML automatique (anti caractères parasites)
 
-### 1. Clonage du dépôt
+---
+
+### 🎨 Interface moderne
+- Dark Mode / Light Mode
+- UI inspirée presse premium
+- Sources cliquables
+- Responsive (desktop + mobile)
+- UX rapide et minimaliste
+
+---
+
+### ⭐ Bonus
+- Système de favoris (localStorage)
+- Gestion des erreurs API
+- Fallback automatique si une source échoue
+- Timeout réseau sécurisé
+
+---
+
+## 🧠 Architecture
+
+### 🔁 Pipeline des données
+
+1. Récupération des articles (RSS + API)
+2. Nettoyage des données
+3. Normalisation des champs
+4. Détection de catégorie
+5. Déduplication
+6. Filtrage strict
+7. Envoi au frontend
+
+---
+
+## 🛠️ Installation
+
+### 1️⃣ Cloner le projet
 ```bash
-git clone [https://github.com/3mamri/flowly.git](https://github.com/3mamri/flowly.git)
+git clone https://github.com/3mamri/flowly.git
 cd flowly
-2. Installation des dépendances
-Bash
+2️⃣ Installer les dépendances
 npm install
-3. Configuration de l'environnement
-Créez un fichier .env à la racine :
+3️⃣ Configuration
 
-Extrait de code
-PORT=3000
-NEWS_API_KEY=VOTRE_CLE_NEWSAPI
-4. Lancement
-Bash
+Créer un fichier .env :
+
+NEWS_API_KEY=VOTRE_CLE_API
+
+⚠️ Optionnel : sans clé API, Flowly fonctionne avec les flux RSS
+
+4️⃣ Lancer le serveur
 npm run dev
 
-### ⚙️ Fonctionnement en 3 étapes
-Extraction : Le backend interroge simultanément NewsAPI et divers flux RSS mondiaux.
+ou
 
-Traitement : Nettoyage des doublons, formatage des dates et filtrage par langue (FR/EN).
+node server.js
+🌐 Accès
+http://localhost:3000
+📡 API
+🔹 Récupérer les articles
+GET /api/news?lang=fr&category=general
+🔹 Récupérer les sources
+GET /api/sources?lang=fr&category=sports
+🔹 Healthcheck
+GET /health
+📂 Structure du projet
+flowly/
+├── public/                # Frontend
+│   ├── js/
+│   │   ├── fetchNews.js
+│   │   └── ui.js
+│   ├── styles.css
+│   ├── script.js
+│   └── index.html
+│
+├── src/
+│   ├── routes/
+│   ├── services/
+│   ├── utils/
+│   └── config/
+│
+├── server.js
+├── package.json
+└── .env
+🔐 Sécurité & Robustesse
+Helmet (sécurité HTTP)
+Rate limiting (anti-spam)
+Timeout sur fetch
+Gestion des erreurs API
+Nettoyage des données (anti XSS)
+📈 Axes d’amélioration
+Cache backend (Redis)
+Pagination avancée
+Tri intelligent (score pertinence)
+Dashboard admin des sources
+IA de classification (NLP)
+Déploiement cloud (Docker / CI-CD)
+🎯 Objectif du projet
 
-Affichage : Injection dynamique dans le DOM via JavaScript Vanilla (sans framework).
+Ce projet démontre :
+
+✔️ Conception d’une API REST
+✔️ Architecture Node.js modulaire
+✔️ Traitement et normalisation de données
+✔️ Gestion d’état côté frontend
+✔️ UX moderne sans framework
