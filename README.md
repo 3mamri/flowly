@@ -52,12 +52,13 @@ Accès rapide aux thématiques majeures :
 
 ---
 
-## ⚙️ Installation & Configuration
+Installation & Configuration
 
 ### 1. Clonage du dépôt
 ```bash
 git clone [https://github.com/3mamri/flowly.git](https://github.com/3mamri/flowly.git)
-cd flowly2. Installation des dépendances
+cd flowly
+2. Installation des dépendances
 Bash
 npm install
 3. Configuration de l'environnement
@@ -70,7 +71,7 @@ NEWS_API_KEY=VOTRE_CLE_NEWSAPI
 Bash
 npm run dev
 
-⚙️ Fonctionnement en 3 étapes
+### ⚙️ Fonctionnement en 3 étapes
 Extraction : Le backend interroge simultanément NewsAPI et divers flux RSS mondiaux.
 
 Traitement : Nettoyage des doublons, formatage des dates et filtrage par langue (FR/EN).
