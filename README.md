@@ -1,94 +1,71 @@
-<h1 align="center">📰 Flowly</h1>
-
-<h2 align="center">Agrégateur d’Actualités Moderne</h2>
+# 📰 Flowly — News Aggregator
 
 <p align="center">
-Flowly est un agrégateur d’actualités développé avec <strong>Node.js (Express)</strong> 
-et <strong>HTML / CSS / JavaScript vanilla</strong>.
+  <img src="public/icone.png" alt="Flowly Logo" width="80">
 </p>
 
+<h2 align="center">L'information décryptée en temps réel</h2>
+
 <p align="center">
-Il combine <strong>NewsAPI</strong> et plusieurs <strong>flux RSS</strong> 
-afin de proposer un fil d’actualité dynamique, filtrable et bilingue.
+  <img src="https://img.shields.io/badge/Projet-Scolaire-blue?style=for-the-badge&logo=googlescholar" alt="Projet Scolaire">
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="NodeJS">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JS Vanilla">
 </p>
 
 ---
 
-## 🚀 Fonctionnalités
-
-### 🌍 Multilingue
-- Français 🇫🇷
-- Anglais 🇬🇧
-
-### 🗂️ Catégories
-- Actualités
-- Politique
-- Économie
-- Sports
-- Culture
-
-### 🔎 Filtrage dynamique
-- Filtre par média
-- Recherche par mot-clé
-- Changement de langue instantané
-
-### 🔄 Agrégation intelligente
-- Fusion NewsAPI + RSS
-- Suppression des doublons
-- Normalisation des données
-
-### 🎨 Interface
-- Dark Mode
-- Sources cliquables
-- Gestion des erreurs et fallback si données manquantes
+> [!IMPORTANT]
+> **CONTEXTE ACADÉMIQUE** > Ce projet démontre la mise en œuvre d'une architecture **Fullstack (Node/Express)** sans framework frontend lourd. L'accent a été mis sur la **gestion de l'asynchronisme**, la **normalisation de données hétérogènes** et l'**optimisation de l'interface utilisateur (UI/UX)**.
 
 ---
 
-## 🛠️ Installation
+### ✨ Présentation
+**Flowly** est un agrégateur d’actualités moderne conçu pour centraliser l'information mondiale. En combinant la puissance de **NewsAPI** et la flexibilité des **flux RSS**, Flowly offre une expérience de lecture fluide, bilingue et entièrement personnalisable.
 
-### 1️⃣ Cloner le projet
+---
 
+## 🚀 Fonctionnalités Clés
+
+### 🌍 Expérience Multilingue
+* **Switch instantané** entre le Français 🇫🇷 et l'Anglais 🇬🇧.
+* Filtrage intelligent des sources selon la langue sélectionnée.
+
+### 🗂️ Organisation par Catégories
+Accès rapide aux thématiques majeures : 
+* `Actualités` • `Politique` • `Économie` • `Sports` • `Culture` • `Technologie`
+
+### 🎨 Design & Ergonomie
+* **Interface "Minimalist Newspaper"** avec typographie premium (*Playfair Display*).
+* **Dark Mode natif** pour un confort de lecture nocturne.
+* **Responsive Design** : Optimisé pour Desktop, Tablette et Mobile.
+
+---
+
+## 🛠️ Stack Technique
+
+| Secteur | Technologies |
+| :--- | :--- |
+| **Frontend** | HTML5, CSS3 (Flexbox/Grid), JavaScript Vanilla |
+| **Backend** | Node.js, Express.js |
+| **Data** | NewsAPI, GNews, Flux RSS XML |
+| **Outils** | Nodemon, Axios, Dotenv |
+
+---
+
+## ⚙️ Installation & Configuration
+
+### 1. Clonage du dépôt
 ```bash
-git clone https://github.com/3mamri/flowly.git
-cd flowly
-2️⃣ Installer les dépendances
+git clone [https://github.com/3mamri/flowly.git](https://github.com/3mamri/flowly.git)
+cd flowly2. Installation des dépendances
+Bash
 npm install
-3️⃣ Configuration
-Créer un fichier .env à la racine :
+3. Configuration de l'environnement
+Créez un fichier .env à la racine :
 
-NEWS_API_KEY=VOTRE_CLE_API
-GNEWS_API_KEY=VOTRE_CLE_API
-
-4️⃣ Lancer le serveur
+Extrait de code
+PORT=3000
+NEWS_API_KEY=VOTRE_CLE_NEWSAPI
+4. Lancement
+Bash
 npm run dev
-Le serveur démarre sur :
-
-http://localhost:3000
-⚙️ Fonctionnement
-Le frontend envoie la langue et la catégorie sélectionnées.
-
-Le backend récupère les articles via NewsAPI et RSS.
-
-Les données sont normalisées et fusionnées.
-
-Le frontend applique les filtres pour un affichage fluide.
-
-📂 Structure du projet
-flowly/
-├── public/          # Frontend
-├── src/             # Backend (routes, services, utils)
-├── server.js
-└── .env
-
-````
-🎓 Objectif
-
-Projet académique démontrant :
-
-Utilisation d’API REST
-
-Architecture backend modulaire
-
-Gestion d’état frontend
-
-Fusion et traitement de données
