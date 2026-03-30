@@ -4,10 +4,10 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Statut-Projet%20Étudiant-blue?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js" />
-  <img src="https://img.shields.io/badge/Express.js-Backend-black?style=for-the-badge&logo=express" />
-  <img src="https://img.shields.io/badge/Frontend-Vanilla%20JS-yellow?style=for-the-badge&logo=javascript" />
-  <img src="https://img.shields.io/badge/Projet-Fullstack-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Node.js-green?style=for-the-badge&logo=node.js" />
+  <img src="Backend-black?style=for-the-badge&logo=express" />
+  <img src="https://img.shields.io/badge/Frontend%20JS-yellow?style=for-the-badge&logo=javascript" />
+  <img src="https://img.shields.io/badge/" />
 </p>
 
 <p align="center">
@@ -141,32 +141,9 @@ flowly/
 ├── server.js
 ├── package.json
 └── .env
-🔐 Sécurité & Robustesse
-Helmet (sécurité HTTP)
-Rate limiting (anti-spam)
-Timeout sur fetch
-Gestion des erreurs API
-Nettoyage des données (anti XSS)
-📈 Axes d’amélioration
-Cache backend (Redis)
-Pagination avancée
-Tri intelligent (score pertinence)
-Dashboard admin des sources
-IA de classification (NLP)
-Déploiement cloud (Docker / CI-CD)
-🎯 Objectif du projet
-
-Ce projet démontre :
-
-✔️ Conception d’une API REST
-✔️ Architecture Node.js modulaire
-✔️ Traitement et normalisation de données
-✔️ Gestion d’état frontend
-✔️ UX moderne sans framework
 
 👨‍💻 Auteur
 
-Amirouche Mamri
 🔗 https://github.com/3mamri
 
 🏁 Licence
