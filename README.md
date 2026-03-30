@@ -14,14 +14,6 @@ provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interf
 
 ---
 
-## 🚀 Démo
-
-👉 http://localhost:3000
-
-*(Ajoute ici un lien si tu déploies sur Render / Vercel / Railway)*
-
----
-
 ## ✨ Fonctionnalités
 
 ### 🌍 Multilingue
@@ -141,6 +133,7 @@ flowly/
 ├── server.js
 ├── package.json
 └── .env
+
 🔐 Sécurité & Robustesse
 Helmet (sécurité HTTP)
 Rate limiting (anti-spam)
