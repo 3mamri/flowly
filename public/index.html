@@ -1,75 +1,74 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flowly - Premium News</title>
-    <link rel="icon" type="image/png" href="icone.png">
-    <link rel="stylesheet" href="styles.css" />
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowly | Ton flux d'actu</title>
-
-        <link rel="icon" type="image/png" href="icone.png">
+    <link rel="icon" type="image/png" href="icone.png">
+    <link rel="stylesheet" href="styles.css">
 </head>
-
-<body id="body">
-
-<!-- TOP BAR : langues -->
-<div class="top-bar">
-    <div class="lang-switcher" role="navigation" aria-label="Choix de langue">
-        <button class="lang-btn" type="button" data-lang="fr">FRANÇAIS</button>
-        <span class="sep" aria-hidden="true">|</span>
-        <button class="lang-btn" type="button" data-lang="en">ENGLISH</button>
-    </div>
-</div>
-
-<!-- HEADER -->
+<body>
 <header class="minimal-header">
-    <div class="h-left" id="current-date" aria-label="Date du jour"></div>
+    <div class="header-row top-row">
+        <div class="h-left">
+            <div id="current-date" aria-label="Date du jour"></div>
+        </div>
 
-    <div class="h-center">
-        <h1>Flowly</h1>
-        <p>L'information décryptée en temps réel</p>
+        <div class="h-center">
+            <div class="lang-switch" aria-label="Choix de langue">
+                <button type="button" class="lang-btn" data-lang="fr">FRANÇAIS</button>
+                <span class="lang-separator">|</span>
+                <button type="button" class="lang-btn" data-lang="en">ENGLISH</button>
+            </div>
+        </div>
+
+        <div class="h-right">
+            <button id="dark-mode-toggle" type="button" aria-label="Changer le thème">THÈME</button>
+        </div>
     </div>
 
-    <div class="h-right">
-        <button id="dark-mode-toggle" type="button" aria-label="Changer le thème">THÈME</button>
+    <div class="header-row brand-row">
+        <div class="brand-wrap">
+            <h1>Flowly</h1>
+            <p>L'information décryptée en temps réel</p>
+        </div>
     </div>
 </header>
+
 <nav class="compact-nav" aria-label="Catégories">
-    <button type="button" class="nav-cat active" data-cat="Actualités">ACTUALITÉS</button>
-    <button type="button" class="nav-cat" data-cat="Politique">POLITIQUE</button>
-    <button type="button" class="nav-cat" data-cat="Économie">ÉCONOMIE</button>
-    <button type="button" class="nav-cat" data-cat="Sports">SPORTS</button>
-    <button type="button" class="nav-cat" data-cat="Culture">CULTURE</button>
+    <button type="button" class="nav-cat active" data-cat="general">ACTUALITÉS</button>
+    <button type="button" class="nav-cat" data-cat="politics">POLITIQUE</button>
+    <button type="button" class="nav-cat" data-cat="economy">ÉCONOMIE</button>
+    <button type="button" class="nav-cat" data-cat="sports">SPORTS</button>
+    <button type="button" class="nav-cat" data-cat="culture">CULTURE</button>
+    <button type="button" class="nav-cat" data-cat="technology">TECH</button>
     <button id="btn-show-fav" type="button">⭐ FAVORIS</button>
 </nav>
-<main>
+
+<main class="page-wrap">
     <section class="search-bar">
         <select id="source-select">
             <option value="">Toutes les sources</option>
         </select>
 
-        <input type="text" id="keyword-input" placeholder="Rechercher..." />
+        <input type="text" id="keyword-input" placeholder="Rechercher...">
 
         <button id="filter-button" type="button">OK</button>
     </section>
 
-    <div class="sources-panel">
+    <section class="sources-panel">
         <div class="sources-title">Sources</div>
         <div id="sources-list" class="sources-list"></div>
-    </div>
+    </section>
 
     <div id="loading-indicator" class="hidden">Chargement...</div>
     <div id="no-results" class="hidden">Aucun résultat.</div>
 
-    <div id="articles-container"></div>
+    <section id="articles-container" class="articles-grid" aria-live="polite"></section>
 </main>
 
-<!-- SCRIPTS (ordre important) -->
 <script src="js/ui.js"></script>
 <script src="js/fetchNews.js"></script>
 <script src="script.js"></script>
-
 </body>
 </html>

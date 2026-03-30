@@ -1,3 +1,5 @@
+// public/js/fetchNews.js
+
 const articlesContainer = document.getElementById('articles-container');
 const keywordInput = document.getElementById('keyword-input');
 const loadingIndicator = document.getElementById('loading-indicator');
@@ -9,12 +11,14 @@ const UI = window.FlowlyUI || null;
 
 const state = {
     lang: localStorage.getItem('flowlyLang') === 'en' ? 'en' : 'fr',
-    category: '',
+    category: 'general',
     source: '',
     keyword: '',
     page: 1,
     pageSize: 60,
 };
+
+window.state = state;
 
 let allArticles = [];
 let allSources = [];
@@ -22,13 +26,9 @@ let lastFetchId = 0;
 let favorites = JSON.parse(localStorage.getItem('flowlyFavorites')) || [];
 
 /* ---------------- HELPERS ---------------- */
-function decodeHTML(html) {
-    const txt = document.createElement("textarea");
-    txt.innerHTML = html || '';
-    return txt.value;
-}
-function decodeHTML(html) {
-    const txt = document.createElement("textarea");
+
+function decodeHTML(html = '') {
+    const txt = document.createElement('textarea');
     txt.innerHTML = html;
     return txt.value;
 }
@@ -38,50 +38,44 @@ function normalizeText(v) {
 }
 
 async function fetchJson(url) {
-    const res = await fetch(url, { headers: { Accept: 'application/json' } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(url, {
+        headers: { Accept: 'application/json' }
+    });
+
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+
     return res.json();
 }
 
-function buildSourcesFallbackFromArticles(articles) {
-    const uniqueNames = new Set(); // Le Set empêche les doublons automatiquement
-    const uniqueSources = [];
-
-    articles.forEach(a => {
-        const name = a?.source?.trim();
-        if (name && !uniqueNames.has(name)) {
-            uniqueNames.add(name);
-            uniqueSources.push({
-                name: name,
-                url: a.sourceUrl || '#'
-            });
-        }
-    });
-    return uniqueSources;
-}
 function setActiveUI() {
-    const activeCat = state.category || 'Actualités';
     UI?.setActiveButtons?.('.lang-btn', state.lang, 'data-lang');
-    UI?.setActiveButtons?.('.nav-cat', activeCat, 'data-cat');
+    UI?.setActiveButtons?.('.nav-cat', state.category, 'data-cat');
+
     const favBtn = document.getElementById('btn-show-fav');
     if (favBtn) {
-        favBtn.classList.toggle('active', state.category === 'FAVORIS');
+        favBtn.classList.toggle('active', state.category === 'favorites');
     }
 }
 
 /* ---------------- FAVORITES ---------------- */
 
-window.toggleFavorite = function(articleLien) {
-    const index = favorites.findIndex(a => a.lien === articleLien);
+window.toggleFavorite = function(articleUrl) {
+    const index = favorites.findIndex((a) => a.url === articleUrl);
+
     if (index > -1) {
         favorites.splice(index, 1);
     } else {
-        const article = allArticles.find(a => a.lien === articleLien);
-        if (article) favorites.push(article);
+        const article = allArticles.find((a) => a.url === articleUrl);
+        if (article) {
+            favorites.push(article);
+        }
     }
+
     localStorage.setItem('flowlyFavorites', JSON.stringify(favorites));
 
-    if (state.category === 'FAVORIS') {
+    if (state.category === 'favorites') {
         window.showFavorites();
     } else {
         applyFiltersAndRender();
@@ -89,7 +83,7 @@ window.toggleFavorite = function(articleLien) {
 };
 
 window.showFavorites = function() {
-    state.category = 'FAVORIS';
+    state.category = 'favorites';
     setActiveUI();
     UI?.setLoading?.(loadingIndicator, false);
     UI?.renderArticles?.(articlesContainer, favorites, noResults);
@@ -98,116 +92,129 @@ window.showFavorites = function() {
 /* ---------------- SOURCES ---------------- */
 
 async function loadSources(fetchId) {
+    if (state.category === 'favorites') {
+        allSources = [];
+        UI?.populateSourceSelect?.(sourceSelect, [], '');
+        UI?.renderSourcesList?.(sourcesList, []);
+        return;
+    }
+
     try {
-        const data = await fetchJson(`/api/sources?lang=${state.lang}`);
+        const params = new URLSearchParams({
+            lang: state.lang,
+            category: state.category
+        });
+
+        const data = await fetchJson(`/api/sources?${params.toString()}`);
+
         if (fetchId !== lastFetchId) return;
+
         allSources = Array.isArray(data.sources) ? data.sources : [];
     } catch (e) {
         console.error('sources error:', e);
+
         if (fetchId !== lastFetchId) return;
         allSources = [];
     }
-    if (!UI) return;
-    UI.populateSourceSelect?.(sourceSelect, allSources, state.source);
-    UI.renderSourcesList?.(sourcesList, allSources);
+
+    UI?.populateSourceSelect?.(sourceSelect, allSources, state.source);
+    UI?.renderSourcesList?.(sourcesList, allSources);
 }
 
 /* ---------------- ARTICLES ---------------- */
 
 async function loadNews(fetchId) {
-    if (state.category === 'FAVORIS') return;
+    if (state.category === 'favorites') return;
+
     UI?.setLoading?.(loadingIndicator, true);
     UI?.showMessage?.(noResults, false);
 
     const params = new URLSearchParams({
         lang: state.lang,
-        page: state.page,
-        pageSize: state.pageSize
+        category: state.category,
+        page: String(state.page),
+        pageSize: String(state.pageSize)
     });
-
-    if (state.category) {
-        params.set('category', state.category);
-    }
 
     try {
         const data = await fetchJson(`/api/news?${params.toString()}`);
+
         if (fetchId !== lastFetchId) return;
 
         allArticles = Array.isArray(data.articles) ? data.articles : [];
 
-        if (!allArticles.length) {
-            UI?.renderArticles?.(articlesContainer, [], noResults);
-            UI?.showMessage?.(noResults, true, "Aucun article trouvé.");
-            // On vide aussi les sources si rien n'est trouvé
-            UI?.renderSourcesList?.(sourcesList, []);
-            return;
-        }
-
-        // --- LE FIX DES DOUBLONS EST ICI ---
-        // On régénère TOUJOURS les sources à partir des nouveaux articles reçus
-        // pour éviter que les anciennes sources s'accumulent
-        allSources = buildSourcesFallbackFromArticles(allArticles);
-
-        // On met à jour l'interface avec la liste propre et unique
-        UI?.populateSourceSelect?.(sourceSelect, allSources, state.source);
-        UI?.renderSourcesList?.(sourcesList, allSources);
-        // ------------------------------------
-
         applyFiltersAndRender();
     } catch (e) {
         console.error('news error:', e);
+
         if (fetchId !== lastFetchId) return;
+
         allArticles = [];
         UI?.renderArticles?.(articlesContainer, [], noResults);
+        UI?.showMessage?.(noResults, true, 'Aucun article trouvé.');
     } finally {
         if (fetchId === lastFetchId) {
             UI?.setLoading?.(loadingIndicator, false);
         }
     }
 }
+
+/* ---------------- FILTER ---------------- */
+
 function applyFiltersAndRender() {
-    if (state.category === 'FAVORIS') {
+    if (state.category === 'favorites') {
         UI?.renderArticles?.(articlesContainer, favorites, noResults);
         return;
     }
 
-    state.keyword = (keywordInput?.value || '').toLowerCase().trim();
+    state.keyword = normalizeText(keywordInput?.value || '');
     state.source = sourceSelect?.value || '';
+
     let filtered = [...allArticles];
 
+    // Sécurité supplémentaire front
+    if (state.category && state.category !== 'general') {
+        filtered = filtered.filter((a) => a.primaryCategory === state.category);
+    }
+
     if (state.source) {
-        filtered = filtered.filter(a => a.source === state.source);
+        filtered = filtered.filter((a) => a.source === state.source);
     }
 
     if (state.keyword) {
-        filtered = filtered.filter(a =>
-            (a.titre || '').toLowerCase().includes(state.keyword) ||
-            (a.description || '').toLowerCase().includes(state.keyword)
+        filtered = filtered.filter((a) =>
+            normalizeText(a.title).includes(state.keyword) ||
+            normalizeText(a.description).includes(state.keyword)
         );
     }
 
-    if (UI && UI.renderArticles) {
-        UI.renderArticles(articlesContainer, filtered, noResults);
-    }
+    UI?.renderArticles?.(articlesContainer, filtered, noResults);
 }
 
 /* ---------------- ORCHESTRATION ---------------- */
 
 function refetchNewsOnly() {
     lastFetchId++;
+    const currentId = lastFetchId;
+
     setActiveUI();
-    loadNews(lastFetchId);
+    loadSources(currentId);
+    loadNews(currentId);
 }
 
 function refetchAll() {
     lastFetchId++;
     const id = lastFetchId;
-    state.lang = localStorage.getItem('flowlyLang') || 'fr';
-    setActiveUI();
+
+    state.lang = localStorage.getItem('flowlyLang') === 'en' ? 'en' : 'fr';
     state.source = '';
     state.keyword = '';
+    state.page = 1;
+
     if (sourceSelect) sourceSelect.value = '';
     if (keywordInput) keywordInput.value = '';
+
+    setActiveUI();
     loadSources(id);
     loadNews(id);
 }
@@ -215,38 +222,45 @@ function refetchAll() {
 /* ---------------- EVENTS ---------------- */
 
 function bindEvents() {
-    const targetBtn = document.getElementById('filter-button');
-    const targetSelect = document.getElementById('source-select');
-    const targetInput = document.getElementById('keyword-input');
-    const favBtn = document.getElementById('btn-show-fav');
-
-    // Gestion des catégories
-    document.querySelectorAll('.nav-cat').forEach(btn => {
+    document.querySelectorAll('.nav-cat').forEach((btn) => {
         btn.addEventListener('click', () => {
-            const label = (btn.getAttribute('data-cat') || 'Actualités').trim();
-            state.category = (label === 'Actualités') ? '' : label;
+            const category = btn.getAttribute('data-cat') || 'general';
+            state.category = category;
             refetchNewsOnly();
         });
     });
 
-    if (targetBtn) targetBtn.addEventListener('click', applyFiltersAndRender);
-    if (targetSelect) targetSelect.addEventListener('change', applyFiltersAndRender);
-    if (targetInput) {
-        targetInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') applyFiltersAndRender();
-        });
-    }
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+            if (!lang) return;
 
-    // Gestion du bouton favoris
-    if (favBtn) {
-        favBtn.addEventListener('click', () => {
-            window.showFavorites();
+            localStorage.setItem('flowlyLang', lang);
+            state.lang = lang;
+            refetchAll();
         });
-    }
+    });
+
+    sourceSelect?.addEventListener('change', applyFiltersAndRender);
+
+    keywordInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            applyFiltersAndRender();
+        }
+    });
+
+    document.getElementById('filter-button')?.addEventListener('click', applyFiltersAndRender);
+
+    document.getElementById('btn-show-fav')?.addEventListener('click', () => {
+        window.showFavorites();
+    });
 }
+
+/* ---------------- INIT ---------------- */
 
 document.addEventListener('DOMContentLoaded', () => {
     bindEvents();
+    setActiveUI();
     refetchAll();
 });
 

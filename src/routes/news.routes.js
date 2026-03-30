@@ -3,18 +3,42 @@ const { getNews } = require('../services/news.service');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+// Catégories universelles
+const ALLOWED_CATEGORIES = [
+    'general',
+    'politics',
+    'economy',
+    'sports',
+    'culture',
+    'technology'
+];
+
+// Langues supportées
+const ALLOWED_LANGS = ['fr', 'en', 'all'];
+
+router.get('/', async (req, res, next) => {
     try {
-        // 1. On récupère les paramètres de la requête (URL)
-        const lang = req.query.lang === 'en' ? 'en' : 'fr';
+        // ===== LANG =====
+        let lang = req.query.lang || 'fr';
+        if (!ALLOWED_LANGS.includes(lang)) {
+            lang = 'fr';
+        }
 
-        // ICI : On récupère la catégorie envoyée par le Front-end (ex: business, sports)
-        const category = req.query.category || '';
+        // ===== CATEGORY =====
+        let category = req.query.category || 'general';
 
+        if (!ALLOWED_CATEGORIES.includes(category)) {
+            return res.status(400).json({
+                success: false,
+                error: `Invalid category. Allowed: ${ALLOWED_CATEGORIES.join(', ')}`
+            });
+        }
+
+        // ===== PAGINATION =====
         const page = Math.min(Math.max(parseInt(req.query.page, 10) || 1, 1), 20);
         const pageSize = Math.min(Math.max(parseInt(req.query.pageSize, 10) || 60, 10), 100);
 
-        // 2. ON TRANSMET LA CATÉGORIE AU SERVICE (C'est ce qui manquait !)
+        // ===== CALL SERVICE =====
         const articles = await getNews({
             lang,
             category,
@@ -22,10 +46,20 @@ router.get('/', async (req, res) => {
             pageSize
         });
 
-        res.json({ success: true, articles });
+        return res.json({
+            success: true,
+            meta: {
+                lang,
+                category,
+                page,
+                pageSize,
+                count: articles.length
+            },
+            articles
+        });
+
     } catch (err) {
-        console.error("Route Error:", err);
-        res.status(500).json({ success: false, articles: [] });
+        next(err); // Passe au error handler global (meilleure pratique)
     }
 });
 
