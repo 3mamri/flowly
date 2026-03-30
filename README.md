@@ -69,3 +69,10 @@ NEWS_API_KEY=VOTRE_CLE_NEWSAPI
 4. Lancement
 Bash
 npm run dev
+
+⚙️ Fonctionnement en 3 étapes
+Extraction : Le backend interroge simultanément NewsAPI et divers flux RSS mondiaux.
+
+Traitement : Nettoyage des doublons, formatage des dates et filtrage par langue (FR/EN).
+
+Affichage : Injection dynamique dans le DOM via JavaScript Vanilla (sans framework).
