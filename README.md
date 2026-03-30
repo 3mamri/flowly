@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Node.js-green?style=for-the-badge&logo=node.js" />
   <img src="Backend-black?style=for-the-badge&logo=express" />
   <img src="https://img.shields.io/badge/Frontend%20JS-yellow?style=for-the-badge&logo=javascript" />
-  <img src="https://img.shields.io/badge/" />
+  <img src="https://img.shields.io/badge"/>
 </p>
 
 <p align="center">
