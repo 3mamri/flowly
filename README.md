@@ -20,7 +20,7 @@ provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interf
 ---
 
 ## 🚀 Démo en ligne
-Retrouvez la version déployée de Flowly ici : <h5>👉 https://flowly-xat3.onrender.com</h5>
+Retrouvez la version déployée de Flowly ici : 👉 https://flowly-xat3.onrender.com
 
 ---
 ## ✨ Fonctionnalités
