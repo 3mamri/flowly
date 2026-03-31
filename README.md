@@ -3,6 +3,7 @@
 <h3 align="center">Agrégateur d’Actualités Intelligent • FR / EN</h3>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/FORMATION-BTS%20SIO%20SLAM-blue?style=for-the-badge" alt="BTS SIO SLAM"> 
   <img src="https://img.shields.io/badge/Statut-Projet%20Étudiant-blue?style=for-the-badge" />
 </p>
 
