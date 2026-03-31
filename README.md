@@ -22,7 +22,7 @@ provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interf
 
 ## 🚀 Démo en ligne
 Retrouvez la version déployée de Flowly ici :
-<h3👉 [https://flowly-xat3.onrender.com](https://oned-fgr4.onrender.com/)</h3>
+<h3👉 https://flowly-xat3.onrender.com</h3>
 
 ---
 ## ✨ Fonctionnalités
