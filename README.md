@@ -75,7 +75,7 @@ Retrouvez la version déployée de Flowly ici : 👉 https://flowly-xat3.onrende
 ---
 
 ## 🛠️ Installation
-
+```text
 ### 1️⃣ Cloner le projet
 ```bash
 git clone https://github.com/3mamri/flowly.git
@@ -96,16 +96,13 @@ npm run dev
 ou
 
 node server.js
-🌐 Accès
-http://localhost:3000
+🌐 Accès : http://localhost:3000
 📡 API
 🔹 Récupérer les articles
-GET /api/news?lang=fr&category=general
 🔹 Récupérer les sources
-GET /api/sources?lang=fr&category=sports
-🔹 Healthcheck
-GET /health
-📂 Structure du projet
+```
+## 📂 Structure du projet
+```text
 flowly/
 ├── public/                # Frontend
 │   ├── js/
@@ -124,14 +121,10 @@ flowly/
 ├── server.js
 ├── package.json
 └── .env
----
+```
 👨‍💻 Auteur
-
-🔗 https://github.com/3mamri
+🔗 GitHub : 3mamri
 
 🏁 Licence
-
 Projet académique
-
----
-
+Ce projet est réalisé dans le cadre de ma foramtion de mon bts sio slam
