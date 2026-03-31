@@ -12,7 +12,11 @@
 Flowly est une application web moderne permettant d’agréger, filtrer et afficher des actualités 
 provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interface claire et performante.
 </p>
+🚀 Démo en ligne
 
+Retrouvez la version déployée de Flowly ici :
+
+👉 https://flowly-xat3.onrender.com
 <p align="center">
 ⚡ Backend : <strong>Node.js / Express</strong> <br>
 🎨 Frontend : <strong>HTML / CSS / JavaScript (Vanilla)</strong>
