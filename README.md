@@ -62,30 +62,12 @@ provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interf
 - Dark Mode / Light Mode
 - UI inspirée presse premium
 - Sources cliquables
-- Responsive (desktop + mobile)
-- UX rapide et minimaliste
 
 ---
 
 ### ⭐ Bonus
 - Système de favoris (localStorage)
 - Gestion des erreurs API
-- Fallback automatique si une source échoue
-- Timeout réseau sécurisé
-
----
-
-## 🧠 Architecture
-
-### 🔁 Pipeline des données
-
-1. Récupération des articles (RSS + API)
-2. Nettoyage des données
-3. Normalisation des champs
-4. Détection de catégorie
-5. Déduplication
-6. Filtrage strict
-7. Envoi au frontend
 
 ---
 
@@ -139,7 +121,7 @@ flowly/
 ├── server.js
 ├── package.json
 └── .env
-
+---
 👨‍💻 Auteur
 
 🔗 https://github.com/3mamri
@@ -147,3 +129,6 @@ flowly/
 🏁 Licence
 
 Projet académique
+
+---
+
