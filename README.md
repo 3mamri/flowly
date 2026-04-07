@@ -14,7 +14,7 @@ provenant de multiples sources (<strong>NewsAPI + RSS</strong>), avec une interf
 
 <p align="center">
 ⚡ Backend : <strong>Node.js / Express</strong> <br>
-🎨 Frontend : <strong>HTML / CSS / JavaScript (Vanilla)</strong> 
+🎨 Frontend : <strong>HTML / CSS / JavaScript </strong> 
 </p>
 
 ---
