@@ -122,7 +122,6 @@ flowly/
 ├── package.json
 └── .env
 ```
-👨‍💻 Auteur
 🔗 GitHub : 3mamri
 
 🏁 Licence
